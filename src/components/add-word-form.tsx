@@ -7,12 +7,12 @@ import { translateToVietnamese } from '@/lib/actions/translate'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Plus, X, Loader2, Sparkles } from 'lucide-react'
+import { Plus, X, Loader2, Check, AlertCircle } from 'lucide-react'
 
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" disabled={pending}>
+    <Button type="submit" disabled={pending} className="flex-1">
       {pending ? 'Đang thêm...' : 'Thêm từ'}
     </Button>
   )
@@ -23,9 +23,33 @@ interface WordData {
   phonetic: string
 }
 
+type FieldStatus = 'idle' | 'loading' | 'success' | 'error'
+
 function truncateText(text: string, maxLength: number = 150): string {
   if (text.length <= maxLength) return text
   return text.slice(0, maxLength).replace(/\s+\S*$/, '') + '...'
+}
+
+// Extract phonetic from multiple sources in the API response
+function extractPhonetic(entry: Record<string, unknown>): string {
+  // Try main phonetic field first
+  if (entry.phonetic && typeof entry.phonetic === 'string') {
+    return entry.phonetic
+  }
+
+  // Try phonetics array - look for one with text
+  const phonetics = entry.phonetics as Array<{ text?: string; audio?: string }> | undefined
+  if (phonetics && Array.isArray(phonetics)) {
+    // Prefer US pronunciation (usually has audio from us.mp3)
+    const usPhonetic = phonetics.find(p => p.audio?.includes('us') && p.text)
+    if (usPhonetic?.text) return usPhonetic.text
+
+    // Then try any with text
+    const withText = phonetics.find(p => p.text)
+    if (withText?.text) return withText.text
+  }
+
+  return ''
 }
 
 async function fetchWordData(word: string): Promise<WordData | null> {
@@ -36,7 +60,7 @@ async function fetchWordData(word: string): Promise<WordData | null> {
     const data = await res.json()
     const entry = data[0]
 
-    const phonetic = entry.phonetic || entry.phonetics?.find((p: { text?: string }) => p.text)?.text || ''
+    const phonetic = extractPhonetic(entry)
     const meaning = entry.meanings?.[0]
     const rawDefinition = meaning?.definitions?.[0]?.definition || ''
 
@@ -56,7 +80,10 @@ export function AddWordForm() {
   const [definition, setDefinition] = useState('')
   const [definitionVi, setDefinitionVi] = useState('')
   const [phonetic, setPhonetic] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+
+  // Status tracking for better UX
+  const [lookupStatus, setLookupStatus] = useState<FieldStatus>('idle')
+  const [translateStatus, setTranslateStatus] = useState<FieldStatus>('idle')
 
   useEffect(() => {
     if (state.success) {
@@ -70,23 +97,38 @@ export function AddWordForm() {
 
   // Auto-lookup when word changes (with debounce)
   useEffect(() => {
-    if (!word.trim() || word.length < 2) return
+    if (!word.trim() || word.length < 2) {
+      setLookupStatus('idle')
+      setTranslateStatus('idle')
+      return
+    }
 
     const timer = setTimeout(async () => {
-      setIsLoading(true)
+      setLookupStatus('loading')
+      setTranslateStatus('idle')
+      setDefinitionVi('')
+
       const data = await fetchWordData(word)
 
       if (data) {
+        setLookupStatus('success')
         if (data.phonetic) setPhonetic(data.phonetic)
         if (data.definition) {
           setDefinition(data.definition)
           // Translate using Gemini server action
+          setTranslateStatus('loading')
           const viTranslation = await translateToVietnamese(data.definition)
-          if (viTranslation) setDefinitionVi(viTranslation)
+          if (viTranslation) {
+            setDefinitionVi(viTranslation)
+            setTranslateStatus('success')
+          } else {
+            setTranslateStatus('error')
+          }
         }
+      } else {
+        setLookupStatus('error')
       }
-      setIsLoading(false)
-    }, 500)
+    }, 600)
 
     return () => clearTimeout(timer)
   }, [word])
@@ -97,12 +139,21 @@ export function AddWordForm() {
     setDefinition('')
     setDefinitionVi('')
     setPhonetic('')
-    setIsLoading(false)
+    setLookupStatus('idle')
+    setTranslateStatus('idle')
     setIsOpen(true)
   }
 
   const handleClose = () => {
     setIsOpen(false)
+  }
+
+  // Status indicator component
+  const StatusIcon = ({ status }: { status: FieldStatus }) => {
+    if (status === 'loading') return <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-500" />
+    if (status === 'success') return <Check className="w-3.5 h-3.5 text-green-500" />
+    if (status === 'error') return <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
+    return null
   }
 
   if (!isOpen) {
@@ -132,7 +183,7 @@ export function AddWordForm() {
           )}
 
           {/* Word input */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label htmlFor="word" className="text-sm font-medium text-gray-700">
               Từ vựng <span className="text-red-500">*</span>
             </label>
@@ -140,30 +191,32 @@ export function AddWordForm() {
               <Input
                 id="word"
                 name="word"
-                placeholder="ví dụ: hello"
+                placeholder="hello, world, ..."
                 value={word}
                 onChange={(e) => setWord(e.target.value)}
+                className="pr-10"
+                autoFocus
                 required
               />
-              {isLoading && (
-                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-gray-400" />
-              )}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <StatusIcon status={lookupStatus} />
+              </div>
             </div>
-            <p className="text-xs text-gray-500 flex items-center gap-1">
-              <Sparkles className="w-3 h-3" />
-              Tự động tra nghĩa và phiên âm
-            </p>
+            {lookupStatus === 'error' && word.length >= 2 && (
+              <p className="text-xs text-amber-600">Không tìm thấy, bạn có thể nhập thủ công</p>
+            )}
           </div>
 
           {/* English definition */}
           <div className="space-y-1.5">
-            <label htmlFor="definition" className="text-sm font-medium text-gray-700">
+            <label htmlFor="definition" className="text-sm font-medium text-gray-700 flex items-center gap-2">
               EN <span className="text-red-500">*</span>
+              {lookupStatus === 'loading' && <Loader2 className="w-3 h-3 animate-spin text-gray-400" />}
             </label>
             <Textarea
               id="definition"
               name="definition"
-              placeholder="Auto-filled"
+              placeholder={lookupStatus === 'loading' ? 'Đang tra cứu...' : 'Nhập nghĩa tiếng Anh'}
               value={definition}
               onChange={(e) => setDefinition(e.target.value)}
               rows={2}
@@ -173,19 +226,35 @@ export function AddWordForm() {
 
           {/* Vietnamese definition - Auto-generated */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">
-              VI <span className="text-xs text-gray-400 font-normal ml-1">{isLoading ? 'đang dịch...' : 'tự động'}</span>
+            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              VI
+              <span className="text-xs text-gray-400 font-normal">tự động</span>
+              <StatusIcon status={translateStatus} />
             </label>
             <input type="hidden" name="definition_vi" value={definitionVi} />
-            <div className="p-2.5 bg-gray-50 border rounded-lg text-gray-700 text-sm">
-              {definitionVi || <span className="text-gray-400 italic">—</span>}
+            <div className={`p-2.5 border rounded-lg text-sm min-h-[42px] ${
+              translateStatus === 'loading' ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'
+            }`}>
+              {translateStatus === 'loading' ? (
+                <span className="text-blue-500 flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Đang dịch...
+                </span>
+              ) : definitionVi ? (
+                <span className="text-gray-700">{definitionVi}</span>
+              ) : (
+                <span className="text-gray-400 italic">—</span>
+              )}
             </div>
           </div>
 
           {/* Phonetic */}
-          <div className="space-y-2">
-            <label htmlFor="phonetic" className="text-sm font-medium text-gray-700">
-              Phiên âm (IPA)
+          <div className="space-y-1.5">
+            <label htmlFor="phonetic" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              IPA
+              {!phonetic && lookupStatus === 'success' && (
+                <span className="text-xs text-amber-500">không có sẵn</span>
+              )}
             </label>
             <Input
               id="phonetic"
