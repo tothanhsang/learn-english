@@ -9,35 +9,36 @@ interface StatsOverviewProps {
 
 export function StatsOverview({ stats }: StatsOverviewProps) {
   return (
-    <div className="space-y-4">
-      {/* Practice shortcuts */}
+    <div className="space-y-3">
+      {/* Practice shortcut */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Tập luyện</CardTitle>
+        <CardHeader className="px-3 py-2 pb-2">
+          <CardTitle className="text-sm">Tập luyện</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="px-3 pb-3 pt-0">
           <Link
             href="/practice"
-            className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition"
+            className="flex items-center gap-2 p-2 rounded-lg bg-green-50 hover:bg-green-100 transition"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-green-600" />
-              </div>
-              <span className="font-medium text-gray-900">FlashCard</span>
+            <div className="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center">
+              <GraduationCap className="w-3.5 h-3.5 text-green-600" />
             </div>
-            <span className="text-sm text-gray-500">({stats.total})</span>
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-medium text-gray-900">FlashCard</span>
+              <span className="text-xs text-gray-500 ml-1">({stats.total})</span>
+            </div>
+            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
           </Link>
         </CardContent>
       </Card>
 
       {/* Statistics */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Thống kê</CardTitle>
+        <CardHeader className="px-3 py-2 pb-2">
+          <CardTitle className="text-sm">Thống kê</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3">
+        <CardContent className="px-3 pb-3 pt-0">
+          <div className="grid grid-cols-2 gap-2">
             <StatItem label="Từ mới" value={stats.new} color="purple" />
             <StatItem label="Đang học" value={stats.learning} color="orange" />
             <StatItem label="Ôn tập" value={stats.reviewing} color="blue" />
@@ -66,9 +67,9 @@ function StatItem({
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg p-3 text-center">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className={`text-xl font-bold ${colorClasses[color]}`}>{value}</p>
+    <div className="bg-gray-50 rounded-lg p-2 text-center">
+      <p className="text-[10px] text-gray-500">{label}</p>
+      <p className={`text-lg font-bold ${colorClasses[color]}`}>{value}</p>
     </div>
   )
 }
