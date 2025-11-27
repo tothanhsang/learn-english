@@ -5,6 +5,7 @@ export interface Word {
   user_id: string
   word: string
   definition: string
+  definition_vi: string | null
   phonetic: string | null
   status: WordStatus
   audio_url: string | null

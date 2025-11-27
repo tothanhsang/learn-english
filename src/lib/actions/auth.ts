@@ -65,7 +65,14 @@ export async function signIn(
   })
 
   if (error) {
-    return { error: 'Email hoặc mật khẩu không đúng' }
+    // More specific error messages
+    if (error.message.includes('Email not confirmed')) {
+      return { error: 'Vui lòng xác nhận email trước khi đăng nhập' }
+    }
+    if (error.message.includes('Invalid login credentials')) {
+      return { error: 'Email hoặc mật khẩu không đúng' }
+    }
+    return { error: error.message }
   }
 
   redirect('/dashboard')

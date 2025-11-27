@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
-import { VocabularyList } from '@/components/vocabulary-list'
+import { VocabularyTabs } from '@/components/vocabulary-tabs'
 import { AddWordForm } from '@/components/add-word-form'
 import { StatsOverview } from '@/components/stats-overview'
+import { PracticePanel } from '@/components/practice-panel'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -21,23 +22,24 @@ export default async function DashboardPage() {
     mastered: words?.filter(w => w.status === 'mastered').length ?? 0,
   }
 
+  // Split words by status for tabs
+  const learningWords = words?.filter(w => w.status === 'new' || w.status === 'learning') ?? []
+  const reviewWords = words?.filter(w => w.status === 'reviewing' || w.status === 'mastered') ?? []
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       {/* Main content */}
-      <div className="lg:col-span-3 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Từ vựng của tôi</h1>
-            <p className="text-gray-600">Quản lý và học từ vựng tiếng Anh</p>
-          </div>
-          <AddWordForm />
-        </div>
-
-        <VocabularyList words={words ?? []} />
+      <div className="lg:col-span-3 space-y-4">
+        <VocabularyTabs
+          learningWords={learningWords}
+          reviewWords={reviewWords}
+          addWordButton={<AddWordForm />}
+        />
       </div>
 
       {/* Sidebar */}
-      <div className="space-y-6">
+      <div className="space-y-4">
+        <PracticePanel wordCount={stats.total} />
         <StatsOverview stats={stats} />
       </div>
     </div>

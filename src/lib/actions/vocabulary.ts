@@ -8,6 +8,7 @@ import type { WordStatus } from '@/types/database'
 const wordSchema = z.object({
   word: z.string().min(1, 'Vui lòng nhập từ vựng'),
   definition: z.string().min(1, 'Vui lòng nhập nghĩa'),
+  definition_vi: z.string().optional(),
   phonetic: z.string().optional(),
 })
 
@@ -23,6 +24,7 @@ export async function addWord(
   const rawData = {
     word: formData.get('word') as string,
     definition: formData.get('definition') as string,
+    definition_vi: formData.get('definition_vi') as string,
     phonetic: formData.get('phonetic') as string,
   }
 
@@ -42,6 +44,7 @@ export async function addWord(
     user_id: user.id,
     word: validated.data.word.toLowerCase().trim(),
     definition: validated.data.definition.trim(),
+    definition_vi: validated.data.definition_vi?.trim() || null,
     phonetic: validated.data.phonetic?.trim() || null,
     status: 'new' as WordStatus,
   })
@@ -59,7 +62,7 @@ export async function addWord(
 
 export async function updateWord(
   wordId: string,
-  data: { word?: string; definition?: string; phonetic?: string; status?: WordStatus }
+  data: { word?: string; definition?: string; definition_vi?: string; phonetic?: string; status?: WordStatus }
 ) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

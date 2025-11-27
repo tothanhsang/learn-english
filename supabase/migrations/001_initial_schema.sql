@@ -7,6 +7,7 @@ CREATE TABLE words (
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   word TEXT NOT NULL,
   definition TEXT NOT NULL,
+  definition_vi TEXT,
   phonetic TEXT,
   status word_status DEFAULT 'new' NOT NULL,
   audio_url TEXT,
