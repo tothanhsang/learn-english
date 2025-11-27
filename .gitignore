@@ -60,15 +60,6 @@ repomix-output.xml
 logs.txt
 
 # For claude code, ignore the following files in git
-screenshots/*
-docs/screenshots/*
-docs/journals/*
-docs/research/*
 .claude/*
-plans/templates/*
-.claude/agents/*
-.claude/commands/*
-.claude/hooks/*
-.claude/skills/*
-.claude/workflows/*
 .opencode/*
+plans/templates/*
