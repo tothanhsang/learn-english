@@ -70,6 +70,20 @@ export interface PhraseStats {
   mastered: number
 }
 
+export interface Writing {
+  id: string
+  user_id: string
+  topic_id: string | null
+  title: string | null
+  content: string
+  word_count: number
+  written_date: string // YYYY-MM-DD format
+  created_at: string
+  updated_at: string
+  // Joined data
+  topic?: Topic | null
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -92,6 +106,11 @@ export interface Database {
         Row: LearningProgress
         Insert: Omit<LearningProgress, 'id' | 'created_at'>
         Update: Partial<Omit<LearningProgress, 'id' | 'created_at'>>
+      }
+      writings: {
+        Row: Writing
+        Insert: Omit<Writing, 'id' | 'created_at' | 'updated_at' | 'word_count' | 'topic'>
+        Update: Partial<Omit<Writing, 'id' | 'created_at' | 'updated_at' | 'word_count' | 'topic'>>
       }
     }
   }

@@ -1,13 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { DashboardContent } from '@/components/dashboard-content'
-import { Word, Phrase, Topic } from '@/types/database'
+import { Word, Phrase, Topic, Writing } from '@/types/database'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Fetch words, phrases, and topics in parallel
-  const [wordsResult, phrasesResult, topicsResult] = await Promise.all([
+  // Fetch words, phrases, topics, and writings in parallel
+  const [wordsResult, phrasesResult, topicsResult, writingsResult] = await Promise.all([
     supabase
       .from('words')
       .select('*')
@@ -23,11 +23,17 @@ export default async function DashboardPage() {
       .select('*')
       .eq('user_id', user!.id)
       .order('name', { ascending: true }),
+    supabase
+      .from('writings')
+      .select('*, topic:topics(*)')
+      .eq('user_id', user!.id)
+      .order('written_date', { ascending: false }),
   ])
 
   const typedWords = (wordsResult.data ?? []) as Word[]
   const typedPhrases = (phrasesResult.data ?? []) as Phrase[]
   const typedTopics = (topicsResult.data ?? []) as Topic[]
+  const typedWritings = (writingsResult.data ?? []) as Writing[]
 
   const stats = {
     total: typedWords.length,
@@ -49,6 +55,7 @@ export default async function DashboardPage() {
     <DashboardContent
       words={typedWords}
       phrases={typedPhrases}
+      writings={typedWritings}
       topics={typedTopics}
       stats={stats}
       phraseStats={phraseStats}

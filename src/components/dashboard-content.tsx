@@ -1,29 +1,32 @@
 'use client'
 
 import { useState } from 'react'
-import { Word, Phrase, Topic, UserStats, PhraseStats } from '@/types/database'
+import { Word, Phrase, Topic, UserStats, PhraseStats, Writing } from '@/types/database'
 import { DaySidebar } from '@/components/day-sidebar'
 import { VocabularyTabs } from '@/components/vocabulary-tabs'
 import { AddWordForm } from '@/components/add-word-form'
 import { AddPhraseForm } from '@/components/add-phrase-form'
+import { AddWritingForm } from '@/components/add-writing-form'
 import { PhraseCard } from '@/components/phrase-card'
+import { WritingCard } from '@/components/writing-card'
 import { StatsOverview } from '@/components/stats-overview'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { BookOpen, MessageSquareQuote } from 'lucide-react'
+import { BookOpen, MessageSquareQuote, FileText } from 'lucide-react'
 
 interface DashboardContentProps {
   words: Word[]
   phrases: Phrase[]
+  writings: Writing[]
   topics: Topic[]
   stats: UserStats
   phraseStats: PhraseStats
 }
 
-export function DashboardContent({ words, phrases, topics, stats, phraseStats }: DashboardContentProps) {
+export function DashboardContent({ words, phrases, writings, topics, stats, phraseStats }: DashboardContentProps) {
   const router = useRouter()
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [mainTab, setMainTab] = useState<'words' | 'phrases'>('words')
+  const [mainTab, setMainTab] = useState<'words' | 'phrases' | 'writings'>('words')
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null)
 
   // Filter words by selected date
@@ -45,6 +48,11 @@ export function DashboardContent({ words, phrases, topics, stats, phraseStats }:
   // Split phrases by status
   const learningPhrases = filteredPhrases.filter(p => p.status === 'new' || p.status === 'learning')
   const reviewPhrases = filteredPhrases.filter(p => p.status === 'reviewing' || p.status === 'mastered')
+
+  // Filter writings by date
+  const filteredWritings = selectedDate
+    ? writings.filter(w => w.written_date === selectedDate)
+    : writings
 
   const handleTopicsChange = () => {
     router.refresh()
@@ -91,6 +99,19 @@ export function DashboardContent({ words, phrases, topics, stats, phraseStats }:
             Cụm từ
             <span className="text-xs text-gray-400">({phrases.length})</span>
           </button>
+          <button
+            onClick={() => setMainTab('writings')}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition',
+              mainTab === 'writings'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            )}
+          >
+            <FileText className="w-4 h-4" />
+            Bài viết
+            <span className="text-xs text-gray-400">({writings.length})</span>
+          </button>
         </div>
 
         {/* Show selected date header */}
@@ -109,19 +130,27 @@ export function DashboardContent({ words, phrases, topics, stats, phraseStats }:
         )}
 
         {/* Content based on main tab */}
-        {mainTab === 'words' ? (
+        {mainTab === 'words' && (
           <VocabularyTabs
             learningWords={learningWords}
             reviewWords={reviewWords}
             addWordButton={<AddWordForm />}
           />
-        ) : (
+        )}
+        {mainTab === 'phrases' && (
           <PhrasesContent
             learningPhrases={learningPhrases}
             reviewPhrases={reviewPhrases}
             topics={topics}
             selectedTopicId={selectedTopicId}
             onSelectTopic={setSelectedTopicId}
+            onTopicsChange={handleTopicsChange}
+          />
+        )}
+        {mainTab === 'writings' && (
+          <WritingsContent
+            writings={filteredWritings}
+            topics={topics}
             onTopicsChange={handleTopicsChange}
           />
         )}
@@ -231,6 +260,42 @@ function PhrasesContent({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {phrases.map((phrase) => (
             <PhraseCard key={phrase.id} phrase={phrase} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Writings content component
+interface WritingsContentProps {
+  writings: Writing[]
+  topics: Topic[]
+  onTopicsChange: () => void
+}
+
+function WritingsContent({ writings, topics, onTopicsChange }: WritingsContentProps) {
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Bài viết hàng ngày
+          <span className="ml-2 text-sm font-normal text-gray-400">({writings.length})</span>
+        </h2>
+        <AddWritingForm topics={topics} onTopicsChange={onTopicsChange} />
+      </div>
+
+      {/* Writing list */}
+      {writings.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
+          <p className="text-gray-500">Chưa có bài viết nào.</p>
+          <p className="text-gray-400 text-sm mt-1">Bấm "Viết bài" để bắt đầu!</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {writings.map((writing) => (
+            <WritingCard key={writing.id} writing={writing} />
           ))}
         </div>
       )}
