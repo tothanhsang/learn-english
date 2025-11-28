@@ -5,6 +5,7 @@ import { signIn, type AuthState } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -22,6 +23,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md space-y-8">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Trang chủ
+        </Link>
+
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">Đăng nhập</h1>
           <p className="mt-2 text-gray-600">Chào mừng bạn quay trở lại</p>
