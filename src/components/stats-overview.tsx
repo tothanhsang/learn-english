@@ -5,9 +5,10 @@ import { GraduationCap, CheckCircle } from 'lucide-react'
 
 interface StatsOverviewProps {
   stats: UserStats
+  label?: string
 }
 
-export function StatsOverview({ stats }: StatsOverviewProps) {
+export function StatsOverview({ stats, label = 'Từ vựng' }: StatsOverviewProps) {
   return (
     <div className="space-y-3">
       {/* Practice shortcut */}
@@ -35,7 +36,7 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
       {/* Statistics */}
       <Card>
         <CardHeader className="px-3 py-2 pb-2">
-          <CardTitle className="text-sm">Thống kê</CardTitle>
+          <CardTitle className="text-sm">Thống kê {label}</CardTitle>
         </CardHeader>
         <CardContent className="px-3 pb-3 pt-0">
           <div className="grid grid-cols-2 gap-2">

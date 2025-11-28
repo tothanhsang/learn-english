@@ -49,6 +49,80 @@ Start with **FSRS algorithm** for new apps. Open-source TypeScript implementatio
 
 ### 2. Data Models & Architecture
 
+#### Topic-Based Learning & Phrase Tracking
+
+Beyond individual vocabulary words, learners benefit from tracking **phrases** and organizing learning by **topics**. This enables contextual learning and better retention.
+
+**Recommended Schema Extensions:**
+
+```sql
+-- Topics for organizing learning content
+CREATE TABLE topics (
+  id BIGSERIAL PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  name TEXT NOT NULL,
+  description TEXT,
+  icon VARCHAR(50),
+  color VARCHAR(20),
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, name)
+);
+
+-- Phrases (idioms, collocations, expressions)
+CREATE TABLE phrases (
+  id BIGSERIAL PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  topic_id BIGINT REFERENCES topics(id),
+  phrase TEXT NOT NULL,
+  meaning TEXT,
+  example_sentence TEXT,
+  context_notes TEXT,
+  audio_url TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, phrase)
+);
+
+-- Learning progress for phrases (same SRS system)
+CREATE TABLE phrase_progress (
+  id BIGSERIAL PRIMARY KEY,
+  phrase_id BIGINT REFERENCES phrases(id),
+  user_id UUID REFERENCES auth.users(id),
+  state learning_state_enum NOT NULL DEFAULT 'new',
+  stability FLOAT DEFAULT 0,
+  difficulty FLOAT DEFAULT 0,
+  retrievability FLOAT DEFAULT 1.0,
+  next_review TIMESTAMP,
+  last_reviewed TIMESTAMP,
+  review_count INT DEFAULT 0,
+  updated_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(phrase_id, user_id)
+);
+
+-- Link words to topics (many-to-many)
+CREATE TABLE word_topics (
+  word_id BIGINT REFERENCES words(id),
+  topic_id BIGINT REFERENCES topics(id),
+  PRIMARY KEY (word_id, topic_id)
+);
+```
+
+**Example Topics:**
+- Business English
+- Travel & Tourism
+- Academic Writing
+- Idioms & Expressions
+- Tech & Programming
+- Daily Conversations
+
+**Phrase Examples:**
+| Phrase | Meaning | Topic |
+|--------|---------|-------|
+| "break the ice" | Start conversation in awkward situation | Idioms |
+| "scalable architecture" | System that handles growth | Tech |
+| "bottom line" | Final result, profit | Business |
+
+---
+
 #### Core Word Entity Schema (PostgreSQL)
 
 ```sql
