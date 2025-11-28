@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 import { addWord, type WordFormState } from '@/lib/actions/vocabulary'
 import { translateToVietnamese } from '@/lib/actions/translate'
@@ -85,15 +85,25 @@ export function AddWordForm() {
   const [lookupStatus, setLookupStatus] = useState<FieldStatus>('idle')
   const [translateStatus, setTranslateStatus] = useState<FieldStatus>('idle')
 
+  // Track success to handle modal close properly
+  const [showToast, setShowToast] = useState(false)
+  const lastTimestampRef = useRef<number | undefined>(undefined)
+
   useEffect(() => {
-    if (state.success) {
+    // Only trigger when timestamp changes (new success)
+    if (state.timestamp && state.timestamp !== lastTimestampRef.current) {
+      lastTimestampRef.current = state.timestamp
       setIsOpen(false)
       setWord('')
       setDefinition('')
       setDefinitionVi('')
       setPhonetic('')
+      setLookupStatus('idle')
+      setTranslateStatus('idle')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
     }
-  }, [state.success])
+  }, [state.timestamp])
 
   // Auto-lookup when word changes (with debounce)
   useEffect(() => {
@@ -158,10 +168,20 @@ export function AddWordForm() {
 
   if (!isOpen) {
     return (
-      <Button onClick={handleOpen} className="gap-2">
-        <Plus className="w-4 h-4" />
-        Thêm Từ Mới
-      </Button>
+      <>
+        <Button onClick={handleOpen} className="gap-2">
+          <Plus className="w-4 h-4" />
+          Thêm Từ Mới
+        </Button>
+
+        {/* Success toast */}
+        {showToast && (
+          <div className="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-in slide-in-from-bottom-2">
+            <Check className="w-4 h-4" />
+            Đã thêm từ vựng thành công!
+          </div>
+        )}
+      </>
     )
   }
 

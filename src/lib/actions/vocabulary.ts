@@ -15,6 +15,7 @@ const wordSchema = z.object({
 export type WordFormState = {
   error?: string
   success?: boolean
+  timestamp?: number // Unique identifier for each success
 }
 
 export async function addWord(
@@ -57,7 +58,7 @@ export async function addWord(
   }
 
   revalidatePath('/dashboard')
-  return { success: true }
+  return { success: true, timestamp: Date.now() }
 }
 
 export async function updateWord(
