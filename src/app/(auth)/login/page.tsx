@@ -1,22 +1,23 @@
-'use client'
+"use client";
 
-import { useFormState, useFormStatus } from 'react-dom'
-import { signIn, type AuthState } from '@/lib/actions/auth'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import Link from 'next/link'
+import { useFormState, useFormStatus } from "react-dom";
+import { signIn, type AuthState } from "@/lib/actions/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 function SubmitButton() {
-  const { pending } = useFormStatus()
+  const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+      {pending ? "Đang đăng nhập..." : "Đăng nhập"}
     </Button>
-  )
+  );
 }
 
 export default function LoginPage() {
-  const [state, formAction] = useFormState<AuthState, FormData>(signIn, {})
+  const [state, formAction] = useFormState<AuthState, FormData>(signIn, {});
+  console.log(state);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -34,7 +35,10 @@ export default function LoginPage() {
           )}
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <Input
@@ -47,7 +51,10 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700"
+            >
               Mật khẩu
             </label>
             <Input
@@ -63,12 +70,15 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-sm text-gray-600">
-          Chưa có tài khoản?{' '}
-          <Link href="/signup" className="text-primary-600 hover:underline font-medium">
+          Chưa có tài khoản?{" "}
+          <Link
+            href="/signup"
+            className="text-primary-600 hover:underline font-medium"
+          >
             Đăng ký ngay
           </Link>
         </p>
       </div>
     </div>
-  )
+  );
 }
