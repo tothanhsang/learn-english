@@ -84,3 +84,17 @@ export async function signOut() {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+export async function demoSignIn(): Promise<AuthState> {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email: "tothanhsang98bd@gmail.com",
+    password: "Admin@123",
+  });
+
+  if (error) {
+    return { error: "Không thể đăng nhập demo. Vui lòng thử lại sau." };
+  }
+
+  redirect("/dashboard");
+}
