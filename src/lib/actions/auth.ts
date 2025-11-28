@@ -1,47 +1,48 @@
-'use server'
+"use server";
 
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { z } from 'zod'
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 
 const authSchema = z.object({
-  email: z.string().email('Email không hợp lệ'),
-  password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
-})
+  email: z.string().email("Email không hợp lệ"),
+  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+});
 
 export type AuthState = {
-  error?: string
-  success?: boolean
-}
+  error?: string;
+  success?: boolean;
+};
 
 export async function signUp(
   _prevState: AuthState,
   formData: FormData
 ): Promise<AuthState> {
   const rawData = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
 
-  const validated = authSchema.safeParse(rawData)
+  const validated = authSchema.safeParse(rawData);
   if (!validated.success) {
-    return { error: validated.error.errors[0].message }
+    return { error: validated.error.errors[0].message };
   }
 
-  const supabase = await createClient()
+  const supabase = await createClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const { error } = await supabase.auth.signUp({
     email: validated.data.email,
     password: validated.data.password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirm`,
+      emailRedirectTo: `${siteUrl}/auth/confirm`,
     },
-  })
+  });
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  return { success: true }
+  return { success: true };
 }
 
 export async function signIn(
@@ -49,37 +50,37 @@ export async function signIn(
   formData: FormData
 ): Promise<AuthState> {
   const rawData = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
 
-  const validated = authSchema.safeParse(rawData)
+  const validated = authSchema.safeParse(rawData);
   if (!validated.success) {
-    return { error: validated.error.errors[0].message }
+    return { error: validated.error.errors[0].message };
   }
 
-  const supabase = await createClient()
+  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
     email: validated.data.email,
     password: validated.data.password,
-  })
+  });
 
   if (error) {
     // More specific error messages
-    if (error.message.includes('Email not confirmed')) {
-      return { error: 'Vui lòng xác nhận email trước khi đăng nhập' }
+    if (error.message.includes("Email not confirmed")) {
+      return { error: "Vui lòng xác nhận email trước khi đăng nhập" };
     }
-    if (error.message.includes('Invalid login credentials')) {
-      return { error: 'Email hoặc mật khẩu không đúng' }
+    if (error.message.includes("Invalid login credentials")) {
+      return { error: "Email hoặc mật khẩu không đúng" };
     }
-    return { error: error.message }
+    return { error: error.message };
   }
 
-  redirect('/dashboard')
+  redirect("/dashboard");
 }
 
 export async function signOut() {
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-  redirect('/')
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/");
 }
