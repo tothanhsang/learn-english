@@ -21,24 +21,24 @@ export default function LoginPage() {
   console.log(state);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 transition-colors">
       <div className="w-full max-w-md space-y-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
+          className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition"
         >
           <ArrowLeft className="w-4 h-4" />
           Trang chủ
         </Link>
 
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Đăng nhập</h1>
-          <p className="mt-2 text-gray-600">Chào mừng bạn quay trở lại</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Đăng nhập</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Chào mừng bạn quay trở lại</p>
         </div>
 
         <form action={formAction} className="space-y-4">
           {state.error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
               {state.error}
             </div>
           )}
@@ -46,7 +46,7 @@ export default function LoginPage() {
           <div className="space-y-2">
             <label
               htmlFor="email"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Email
             </label>
@@ -62,7 +62,7 @@ export default function LoginPage() {
           <div className="space-y-2">
             <label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Mật khẩu
             </label>
@@ -78,11 +78,11 @@ export default function LoginPage() {
           <SubmitButton />
         </form>
 
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
           Chưa có tài khoản?{" "}
           <Link
             href="/signup"
-            className="text-primary-600 hover:underline font-medium"
+            className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
           >
             Đăng ký ngay
           </Link>

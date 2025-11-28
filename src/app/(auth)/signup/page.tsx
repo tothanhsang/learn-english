@@ -20,36 +20,36 @@ export default function SignUpPage() {
   const [state, formAction] = useFormState<AuthState, FormData>(signUp, {})
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 transition-colors">
       <div className="w-full max-w-md space-y-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
+          className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition"
         >
           <ArrowLeft className="w-4 h-4" />
           Trang chủ
         </Link>
 
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Đăng ký tài khoản</h1>
-          <p className="mt-2 text-gray-600">Bắt đầu học tiếng Anh ngay hôm nay</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Đăng ký tài khoản</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Bắt đầu học tiếng Anh ngay hôm nay</p>
         </div>
 
         <form action={formAction} className="space-y-4">
           {state.error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
               {state.error}
             </div>
           )}
 
           {state.success && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+            <div className="p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg text-green-700 dark:text-green-400 text-sm">
               Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.
             </div>
           )}
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Email
             </label>
             <Input
@@ -62,7 +62,7 @@ export default function SignUpPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Mật khẩu
             </label>
             <Input
@@ -77,9 +77,9 @@ export default function SignUpPage() {
           <SubmitButton />
         </form>
 
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
           Đã có tài khoản?{' '}
-          <Link href="/login" className="text-primary-600 hover:underline font-medium">
+          <Link href="/login" className="text-primary-600 dark:text-primary-400 hover:underline font-medium">
             Đăng nhập
           </Link>
         </p>

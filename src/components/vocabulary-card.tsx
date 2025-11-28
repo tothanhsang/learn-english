@@ -47,15 +47,15 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition group">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition group">
       {/* Header: Word + Badge */}
       <div className="flex items-start justify-between mb-1">
-        <h3 className="font-semibold text-gray-900">{word.word}</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-white">{word.word}</h3>
         <Badge variant={word.status}>{statusLabels[word.status]}</Badge>
       </div>
 
       {/* Phonetic + Audio */}
-      <div className="flex items-center gap-1 text-sm text-gray-500 mb-2">
+      <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-2">
         <AudioPlayer text={word.word} />
         {word.phonetic && <span>{word.phonetic}</span>}
       </div>
@@ -82,11 +82,11 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
       ) : (
         <>
           {/* English definition */}
-          <p className="text-gray-600 text-sm line-clamp-2">{word.definition}</p>
+          <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">{word.definition}</p>
 
           {/* Vietnamese definition */}
           {word.definition_vi && (
-            <p className="text-gray-500 text-sm mt-1 italic line-clamp-2">
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 italic line-clamp-2">
               {word.definition_vi}
             </p>
           )}
@@ -97,7 +97,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
               variant="ghost"
               size="icon"
               onClick={() => setIsEditing(true)}
-              className="h-8 w-8 text-gray-400 hover:text-blue-500"
+              className="h-8 w-8 text-gray-400 dark:text-gray-500 hover:text-blue-500"
             >
               <Pencil className="w-3.5 h-3.5" />
             </Button>
@@ -106,7 +106,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
               size="icon"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="h-8 w-8 text-gray-400 hover:text-red-500"
+              className="h-8 w-8 text-gray-400 dark:text-gray-500 hover:text-red-500"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </Button>

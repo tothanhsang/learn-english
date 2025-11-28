@@ -72,57 +72,57 @@ export function DashboardContent({ words, phrases, writings, topics, stats, phra
       {/* Main content (takes most space) */}
       <div className="flex-1 min-w-0 space-y-3">
         {/* Main tab switcher: Words vs Phrases */}
-        <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg w-fit">
+        <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
           <button
             onClick={() => setMainTab('words')}
             className={cn(
               'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition',
               mainTab === 'words'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             )}
           >
             <BookOpen className="w-4 h-4" />
             Từ vựng
-            <span className="text-xs text-gray-400">({words.length})</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500">({words.length})</span>
           </button>
           <button
             onClick={() => setMainTab('phrases')}
             className={cn(
               'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition',
               mainTab === 'phrases'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             )}
           >
             <MessageSquareQuote className="w-4 h-4" />
             Cụm từ
-            <span className="text-xs text-gray-400">({phrases.length})</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500">({phrases.length})</span>
           </button>
           <button
             onClick={() => setMainTab('writings')}
             className={cn(
               'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition',
               mainTab === 'writings'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             )}
           >
             <FileText className="w-4 h-4" />
             Bài viết
-            <span className="text-xs text-gray-400">({writings.length})</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500">({writings.length})</span>
           </button>
         </div>
 
         {/* Show selected date header */}
         {selectedDate && (
-          <div className="bg-primary-50 border border-primary-200 rounded-lg px-3 py-1.5 flex items-center justify-between">
-            <span className="text-xs text-primary-700">
+          <div className="bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 rounded-lg px-3 py-1.5 flex items-center justify-between">
+            <span className="text-xs text-primary-700 dark:text-primary-300">
               Ngày: <strong>{new Date(selectedDate).toLocaleDateString('vi-VN')}</strong>
             </span>
             <button
               onClick={() => setSelectedDate(null)}
-              className="text-xs text-primary-600 hover:text-primary-800 underline"
+              className="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 underline"
             >
               Tất cả
             </button>
