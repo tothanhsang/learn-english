@@ -19,16 +19,16 @@ export function StatsOverview({ stats, label = 'Từ vựng' }: StatsOverviewPro
         <CardContent className="px-3 pb-3 pt-0">
           <Link
             href="/practice"
-            className="flex items-center gap-2 p-2 rounded-lg bg-green-50 hover:bg-green-100 transition"
+            className="flex items-center gap-2 p-2 rounded-lg bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 transition"
           >
-            <div className="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center">
-              <GraduationCap className="w-3.5 h-3.5 text-green-600" />
+            <div className="w-7 h-7 rounded-lg bg-green-100 dark:bg-green-800 flex items-center justify-center">
+              <GraduationCap className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
             </div>
             <div className="flex-1 min-w-0">
-              <span className="text-sm font-medium text-gray-900">FlashCard</span>
-              <span className="text-xs text-gray-500 ml-1">({stats.total})</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-white">FlashCard</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">({stats.total})</span>
             </div>
-            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+            <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400 flex-shrink-0" />
           </Link>
         </CardContent>
       </Card>
@@ -68,8 +68,8 @@ function StatItem({
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg p-2 text-center">
-      <p className="text-[10px] text-gray-500">{label}</p>
+    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-center">
+      <p className="text-[10px] text-gray-500 dark:text-gray-400">{label}</p>
       <p className={`text-lg font-bold ${colorClasses[color]}`}>{value}</p>
     </div>
   )

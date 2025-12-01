@@ -116,24 +116,24 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white z-10">
-          <h2 className="text-lg font-semibold">Viết đoạn văn</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Viết đoạn văn</h2>
+          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form action={formAction} className="p-4 space-y-4">
           {state.error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
               {state.error}
             </div>
           )}
 
           {/* Date picker with quick buttons */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               Ngày viết
             </label>
@@ -143,8 +143,8 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
                 onClick={() => setWrittenDate(getToday())}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
                   writtenDate === getToday()
-                    ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 ring-2 ring-primary-500'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 Hôm nay
@@ -154,8 +154,8 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
                 onClick={() => setWrittenDate(getYesterday())}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
                   writtenDate === getYesterday()
-                    ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 ring-2 ring-primary-500'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 Hôm qua
@@ -166,10 +166,10 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
                 value={writtenDate}
                 onChange={(e) => setWrittenDate(e.target.value)}
                 max={getToday()}
-                className="flex-1 px-3 py-1.5 border rounded-lg text-sm"
+                className="flex-1 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
-            <p className="text-xs text-gray-500">{formatDate(writtenDate)}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(writtenDate)}</p>
           </div>
 
           {/* Topic selector */}
@@ -182,8 +182,8 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
 
           {/* Title (optional) */}
           <div className="space-y-1.5">
-            <label htmlFor="title" className="text-sm font-medium text-gray-700">
-              Tiêu đề <span className="text-gray-400 font-normal">(tùy chọn)</span>
+            <label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Tiêu đề <span className="text-gray-400 dark:text-gray-500 font-normal">(tùy chọn)</span>
             </label>
             <Input
               id="title"
@@ -197,10 +197,10 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
           {/* Content */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label htmlFor="content" className="text-sm font-medium text-gray-700">
+              <label htmlFor="content" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Nội dung <span className="text-red-500">*</span>
               </label>
-              <span className="text-xs text-gray-400">{wordCount} từ</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500">{wordCount} từ</span>
             </div>
             <Textarea
               id="content"

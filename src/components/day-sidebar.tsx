@@ -52,9 +52,9 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
   const sortedDates = Array.from(groupedWords.keys()).sort((a, b) => b.localeCompare(a))
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden sticky top-4">
-      <div className="px-3 py-2 border-b bg-gray-50">
-        <h3 className="font-medium text-gray-900 text-xs flex items-center gap-1.5">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden sticky top-4">
+      <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+        <h3 className="font-medium text-gray-900 dark:text-white text-xs flex items-center gap-1.5">
           <Calendar className="w-3.5 h-3.5" />
           Theo ngày
         </h3>
@@ -65,8 +65,8 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
         <button
           onClick={() => onSelectDate(null)}
           className={cn(
-            'w-full px-3 py-2 flex items-center justify-between text-left text-xs transition hover:bg-gray-50',
-            selectedDate === null && 'bg-primary-50 text-primary-700 font-medium'
+            'w-full px-3 py-2 flex items-center justify-between text-left text-xs transition hover:bg-gray-50 dark:hover:bg-gray-700',
+            selectedDate === null && 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium'
           )}
         >
           <span className="flex items-center gap-1.5">
@@ -75,7 +75,7 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
           </span>
           <span className={cn(
             'text-[10px] px-1.5 py-0.5 rounded-full min-w-[20px] text-center',
-            selectedDate === null ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-600'
+            selectedDate === null ? 'bg-primary-100 dark:bg-primary-800 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
           )}>
             {words.length}
           </span>
@@ -91,8 +91,8 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
               key={date}
               onClick={() => onSelectDate(date)}
               className={cn(
-                'w-full px-3 py-2 flex items-center justify-between text-left text-xs transition hover:bg-gray-50 border-t border-gray-100',
-                isSelected && 'bg-primary-50 text-primary-700 font-medium'
+                'w-full px-3 py-2 flex items-center justify-between text-left text-xs transition hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-100 dark:border-gray-700',
+                isSelected && 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium'
               )}
             >
               <span className="flex items-center gap-1.5 truncate">
@@ -101,7 +101,7 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
               </span>
               <span className={cn(
                 'text-[10px] px-1.5 py-0.5 rounded-full min-w-[20px] text-center flex-shrink-0',
-                isSelected ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-600'
+                isSelected ? 'bg-primary-100 dark:bg-primary-800 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
               )}>
                 {dateWords.length}
               </span>
@@ -110,7 +110,7 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
         })}
 
         {sortedDates.length === 0 && (
-          <p className="p-3 text-xs text-gray-500 text-center">
+          <p className="p-3 text-xs text-gray-500 dark:text-gray-400 text-center">
             Chưa có từ vựng
           </p>
         )}

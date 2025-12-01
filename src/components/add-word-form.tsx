@@ -187,24 +187,24 @@ export function AddWordForm() {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white z-10">
-          <h2 className="text-lg font-semibold">Thêm từ vựng mới</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Thêm từ vựng mới</h2>
+          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form action={formAction} className="p-4 space-y-4">
           {state.error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
               {state.error}
             </div>
           )}
 
           {/* Word input */}
           <div className="space-y-1.5">
-            <label htmlFor="word" className="text-sm font-medium text-gray-700">
+            <label htmlFor="word" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Từ vựng <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -229,7 +229,7 @@ export function AddWordForm() {
 
           {/* English definition */}
           <div className="space-y-1.5">
-            <label htmlFor="definition" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <label htmlFor="definition" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
               Nghĩa tiếng Việt
               {lookupStatus === 'loading' && <Loader2 className="w-3 h-3 animate-spin text-gray-400" />}
             </label>
@@ -245,30 +245,30 @@ export function AddWordForm() {
 
           {/* Vietnamese definition - Auto-generated */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
               Nghĩa tiếng Việt (Auto)
               <StatusIcon status={translateStatus} />
             </label>
             <input type="hidden" name="definition_vi" value={definitionVi} />
             <div className={`p-2.5 border rounded-lg text-sm min-h-[42px] ${
-              translateStatus === 'loading' ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'
+              translateStatus === 'loading' ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
             }`}>
               {translateStatus === 'loading' ? (
-                <span className="text-blue-500 flex items-center gap-2">
+                <span className="text-blue-500 dark:text-blue-400 flex items-center gap-2">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   Đang dịch...
                 </span>
               ) : definitionVi ? (
-                <span className="text-gray-700">{definitionVi}</span>
+                <span className="text-gray-700 dark:text-gray-300">{definitionVi}</span>
               ) : (
-                <span className="text-gray-400 italic">—</span>
+                <span className="text-gray-400 dark:text-gray-500 italic">—</span>
               )}
             </div>
           </div>
 
           {/* Phonetic */}
           <div className="space-y-1.5">
-            <label htmlFor="phonetic" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <label htmlFor="phonetic" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
               IPA
               {!phonetic && lookupStatus === 'success' && (
                 <span className="text-xs text-amber-500">không có sẵn</span>

@@ -57,7 +57,7 @@ export function TopicSelector({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-gray-700">Chủ đề</label>
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Chủ đề</label>
 
       {/* Topic pills */}
       <div className="flex flex-wrap gap-2">
@@ -67,8 +67,8 @@ export function TopicSelector({
           onClick={() => onSelect(null)}
           className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
             selectedTopicId === null
-              ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 ring-2 ring-primary-500'
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
         >
           Tất cả
@@ -98,7 +98,7 @@ export function TopicSelector({
           <button
             type="button"
             onClick={() => setIsCreating(true)}
-            className="px-3 py-1.5 rounded-full text-sm font-medium bg-gray-50 text-gray-500 hover:bg-gray-100 border border-dashed border-gray-300 flex items-center gap-1"
+            className="px-3 py-1.5 rounded-full text-sm font-medium bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 border border-dashed border-gray-300 dark:border-gray-600 flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" />
             Thêm
@@ -108,7 +108,7 @@ export function TopicSelector({
 
       {/* Create new topic form */}
       {isCreating && (
-        <div className="p-3 bg-gray-50 rounded-lg border space-y-3">
+        <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 space-y-3">
           <div className="flex gap-2">
             <Input
               placeholder="Tên chủ đề..."
@@ -143,7 +143,7 @@ export function TopicSelector({
                 type="button"
                 onClick={() => setSelectedIcon(icon)}
                 className={`w-8 h-8 rounded flex items-center justify-center text-lg ${
-                  selectedIcon === icon ? 'bg-primary-100 ring-2 ring-primary-500' : 'hover:bg-gray-100'
+                  selectedIcon === icon ? 'bg-primary-100 dark:bg-primary-900/50 ring-2 ring-primary-500' : 'hover:bg-gray-100 dark:hover:bg-gray-600'
                 }`}
               >
                 {icon}

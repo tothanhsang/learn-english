@@ -56,25 +56,25 @@ export function WritingCard({ writing }: WritingCardProps) {
     : writing.content.slice(0, previewLength) + '...'
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition group">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition group">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-primary-600" />
+          <div className="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
+            <FileText className="w-5 h-5 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
             {writing.title ? (
-              <h3 className="font-semibold text-gray-900 text-lg">{writing.title}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white text-lg">{writing.title}</h3>
             ) : (
-              <span className="text-gray-500 italic">Không có tiêu đề</span>
+              <span className="text-gray-500 dark:text-gray-400 italic">Không có tiêu đề</span>
             )}
             <div className="flex items-center gap-3 mt-1">
-              <div className="flex items-center gap-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                 <Calendar className="w-3.5 h-3.5" />
                 {formatDate(writing.written_date)}
               </div>
-              <span className="text-sm text-gray-400">{writing.word_count} từ</span>
+              <span className="text-sm text-gray-400 dark:text-gray-500">{writing.word_count} từ</span>
               {writing.topic && <TopicBadge topic={writing.topic} />}
             </div>
           </div>
@@ -86,7 +86,7 @@ export function WritingCard({ writing }: WritingCardProps) {
             variant="ghost"
             size="icon"
             onClick={() => setIsEditing(true)}
-            className="h-8 w-8 text-gray-400 hover:text-blue-500"
+            className="h-8 w-8 text-gray-400 dark:text-gray-500 hover:text-blue-500"
           >
             <Pencil className="w-4 h-4" />
           </Button>
@@ -95,7 +95,7 @@ export function WritingCard({ writing }: WritingCardProps) {
             size="icon"
             onClick={handleDelete}
             disabled={isDeleting}
-            className="h-8 w-8 text-gray-400 hover:text-red-500"
+            className="h-8 w-8 text-gray-400 dark:text-gray-500 hover:text-red-500"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -124,13 +124,13 @@ export function WritingCard({ writing }: WritingCardProps) {
         </div>
       ) : (
         <div className="mt-3 pl-13">
-          <p className="text-gray-700 text-base leading-relaxed whitespace-pre-wrap">{displayContent}</p>
+          <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed whitespace-pre-wrap">{displayContent}</p>
 
           {/* Expand/collapse */}
           {needsTruncation && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-sm text-primary-600 hover:text-primary-800 mt-3 font-medium"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 mt-3 font-medium"
             >
               {isExpanded ? '← Thu gọn' : 'Xem thêm →'}
             </button>

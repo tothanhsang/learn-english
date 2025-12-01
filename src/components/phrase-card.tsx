@@ -54,12 +54,12 @@ export function PhraseCard({ phrase }: PhraseCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition group">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition group">
       {/* Header: Phrase + Badge */}
       <div className="flex items-start justify-between mb-1">
         <div className="flex items-center gap-2">
-          <MessageSquareQuote className="w-4 h-4 text-gray-400" />
-          <h3 className="font-semibold text-gray-900">{phrase.phrase}</h3>
+          <MessageSquareQuote className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          <h3 className="font-semibold text-gray-900 dark:text-white">{phrase.phrase}</h3>
         </div>
         <Badge variant={phrase.status}>{statusLabels[phrase.status]}</Badge>
       </div>
@@ -74,7 +74,7 @@ export function PhraseCard({ phrase }: PhraseCardProps) {
       {isEditing ? (
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Nghĩa</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Nghĩa</label>
             <Textarea
               value={editMeaning}
               onChange={(e) => setEditMeaning(e.target.value)}
@@ -84,7 +84,7 @@ export function PhraseCard({ phrase }: PhraseCardProps) {
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Ví dụ</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Ví dụ</label>
             <Textarea
               value={editExample}
               onChange={(e) => setEditExample(e.target.value)}
@@ -106,18 +106,18 @@ export function PhraseCard({ phrase }: PhraseCardProps) {
       ) : (
         <>
           {/* English meaning */}
-          <p className="text-gray-600 text-sm line-clamp-2">{phrase.meaning}</p>
+          <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">{phrase.meaning}</p>
 
           {/* Vietnamese meaning */}
           {phrase.meaning_vi && (
-            <p className="text-gray-500 text-sm mt-1 italic line-clamp-2">
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 italic line-clamp-2">
               {phrase.meaning_vi}
             </p>
           )}
 
           {/* Example sentence */}
           {phrase.example_sentence && (
-            <p className="text-gray-400 text-xs mt-2 border-l-2 border-gray-200 pl-2 italic">
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-2 border-l-2 border-gray-200 dark:border-gray-600 pl-2 italic">
               &ldquo;{phrase.example_sentence}&rdquo;
             </p>
           )}
@@ -128,7 +128,7 @@ export function PhraseCard({ phrase }: PhraseCardProps) {
               variant="ghost"
               size="icon"
               onClick={() => setIsEditing(true)}
-              className="h-8 w-8 text-gray-400 hover:text-blue-500"
+              className="h-8 w-8 text-gray-400 dark:text-gray-500 hover:text-blue-500"
             >
               <Pencil className="w-3.5 h-3.5" />
             </Button>
@@ -137,7 +137,7 @@ export function PhraseCard({ phrase }: PhraseCardProps) {
               size="icon"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="h-8 w-8 text-gray-400 hover:text-red-500"
+              className="h-8 w-8 text-gray-400 dark:text-gray-500 hover:text-red-500"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </Button>
