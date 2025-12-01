@@ -434,7 +434,7 @@ export async function getIELTSStats(planId: string): Promise<IELTSStats> {
   ).length
 
   // Calculate streak
-  const uniqueDates = [...new Set(sessions.map((s) => s.session_date))].sort().reverse()
+  const uniqueDates = Array.from(new Set(sessions.map((s) => s.session_date))).sort().reverse()
   let currentStreak = 0
   const today = new Date().toISOString().split('T')[0]
 
