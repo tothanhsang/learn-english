@@ -19,13 +19,13 @@ export function Header({ user }: { user: User }) {
   const pathname = usePathname()
 
   return (
-    <header className="gradient-header text-white">
+    <header className="gradient-header dark:glass dark:bg-white/5 dark:border-b dark:border-white/10 text-white sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2">
             <span className="text-2xl">⚡</span>
-            <span className="font-bold text-lg hidden sm:block">Learn English</span>
+            <span className="font-extrabold text-lg hidden sm:block tracking-tight">Learn English</span>
           </Link>
 
           {/* Navigation */}
@@ -38,14 +38,14 @@ export function Header({ user }: { user: User }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-lg transition',
+                    'flex items-center gap-2 px-4 py-2 rounded-xl transition-all',
                     isActive
-                      ? 'bg-white/20 text-white'
+                      ? 'bg-white/20 text-white dark:bg-white/15 dark:shadow-lg dark:shadow-accent-pink/10'
                       : 'text-white/80 hover:bg-white/10 hover:text-white'
                   )}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{item.label}</span>
+                  <span className="hidden sm:inline font-medium">{item.label}</span>
                 </Link>
               )
             })}
@@ -53,7 +53,7 @@ export function Header({ user }: { user: User }) {
 
           {/* User menu */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-white/80 hidden md:block">
+            <span className="text-sm text-white/70 hidden md:block">
               {user.email}
             </span>
             <ThemeToggle className="text-white hover:bg-white/10" />
