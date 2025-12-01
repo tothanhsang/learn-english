@@ -12,7 +12,7 @@ import { WritingCard } from '@/components/writing-card'
 import { StatsOverview } from '@/components/stats-overview'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { BookOpen, MessageSquareQuote, FileText } from 'lucide-react'
+import { BookOpen, MessageSquareQuote, FileText, Calendar, X } from 'lucide-react'
 
 interface DashboardContentProps {
   words: Word[]
@@ -28,6 +28,7 @@ export function DashboardContent({ words, phrases, writings, topics, stats, phra
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [mainTab, setMainTab] = useState<'words' | 'phrases' | 'writings'>('words')
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null)
+  const [showDaySidebar, setShowDaySidebar] = useState(false)
 
   // Filter words by selected date
   const filteredWords = selectedDate
@@ -60,7 +61,39 @@ export function DashboardContent({ words, phrases, writings, topics, stats, phra
 
   return (
     <div className="flex gap-3">
-      {/* Left Sidebar - Day filter (narrow) */}
+      {/* Mobile Day Sidebar Overlay */}
+      {showDaySidebar && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowDaySidebar(false)}
+          />
+          <div className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 shadow-xl p-4 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Lọc theo ngày
+              </h3>
+              <button
+                onClick={() => setShowDaySidebar(false)}
+                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition"
+              >
+                <X className="w-5 h-5 text-gray-500 dark:text-white/60" />
+              </button>
+            </div>
+            <DaySidebar
+              words={words}
+              selectedDate={selectedDate}
+              onSelectDate={(date) => {
+                setSelectedDate(date)
+                setShowDaySidebar(false)
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Left Sidebar - Day filter (narrow) - Desktop only */}
       <div className="hidden lg:block w-36 flex-shrink-0">
         <DaySidebar
           words={words}
@@ -72,46 +105,63 @@ export function DashboardContent({ words, phrases, writings, topics, stats, phra
       {/* Main content (takes most space) */}
       <div className="flex-1 min-w-0 space-y-3">
         {/* Main tab switcher: Words vs Phrases */}
-        <div className="flex items-center gap-1 bg-gray-100 dark:glass-subtle dark:bg-white/5 p-1 rounded-xl w-fit">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Mobile day filter button */}
           <button
-            onClick={() => setMainTab('words')}
+            onClick={() => setShowDaySidebar(true)}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition',
-              mainTab === 'words'
-                ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
-                : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
+              'lg:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition',
+              'bg-gray-100 dark:glass-subtle dark:bg-white/5',
+              selectedDate
+                ? 'text-primary-600 dark:text-accent-pink'
+                : 'text-gray-600 dark:text-white/70'
             )}
           >
-            <BookOpen className="w-4 h-4" />
-            Từ vựng
-            <span className="text-xs text-gray-400 dark:text-white/40">({words.length})</span>
+            <Calendar className="w-4 h-4" />
+            <span className="hidden sm:inline">{selectedDate ? new Date(selectedDate).toLocaleDateString('vi-VN', { day: 'numeric', month: 'short' }) : 'Ngày'}</span>
           </button>
-          <button
-            onClick={() => setMainTab('phrases')}
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition',
-              mainTab === 'phrases'
-                ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
-                : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
-            )}
-          >
-            <MessageSquareQuote className="w-4 h-4" />
-            Cụm từ
-            <span className="text-xs text-gray-400 dark:text-white/40">({phrases.length})</span>
-          </button>
-          <button
-            onClick={() => setMainTab('writings')}
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition',
-              mainTab === 'writings'
-                ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
-                : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
-            )}
-          >
-            <FileText className="w-4 h-4" />
-            Bài viết
-            <span className="text-xs text-gray-400 dark:text-white/40">({writings.length})</span>
-          </button>
+
+          <div className="flex items-center gap-1 bg-gray-100 dark:glass-subtle dark:bg-white/5 p-1 rounded-xl">
+            <button
+              onClick={() => setMainTab('words')}
+              className={cn(
+                'flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition',
+                mainTab === 'words'
+                  ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
+                  : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
+              )}
+            >
+              <BookOpen className="w-4 h-4" />
+              <span className="hidden sm:inline">Từ vựng</span>
+              <span className="text-xs text-gray-400 dark:text-white/40">({words.length})</span>
+            </button>
+            <button
+              onClick={() => setMainTab('phrases')}
+              className={cn(
+                'flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition',
+                mainTab === 'phrases'
+                  ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
+                  : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
+              )}
+            >
+              <MessageSquareQuote className="w-4 h-4" />
+              <span className="hidden sm:inline">Cụm từ</span>
+              <span className="text-xs text-gray-400 dark:text-white/40">({phrases.length})</span>
+            </button>
+            <button
+              onClick={() => setMainTab('writings')}
+              className={cn(
+                'flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition',
+                mainTab === 'writings'
+                  ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
+                  : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
+              )}
+            >
+              <FileText className="w-4 h-4" />
+              <span className="hidden sm:inline">Bài viết</span>
+              <span className="text-xs text-gray-400 dark:text-white/40">({writings.length})</span>
+            </button>
+          </div>
         </div>
 
         {/* Show selected date header */}
