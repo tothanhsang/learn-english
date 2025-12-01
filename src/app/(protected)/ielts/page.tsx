@@ -1,15 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { getActivePlan, getAllPlans, getSessionsByPlan, getMilestonesByPlan, getIELTSStats } from '@/lib/actions/ielts'
 import { IELTSContent } from '@/components/ielts/ielts-content'
 
 export default async function IELTSPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return null
-  }
-
   const [activePlan, allPlans] = await Promise.all([
     getActivePlan(),
     getAllPlans(),
