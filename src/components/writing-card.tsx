@@ -56,7 +56,7 @@ export function WritingCard({ writing }: WritingCardProps) {
     : writing.content.slice(0, previewLength) + '...'
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition group">
+    <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition group dark:glass-card dark:border-white/15 dark:hover:border-white/25 dark:hover:shadow-lg dark:hover:shadow-accent-pink/5">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ export function WritingCard({ writing }: WritingCardProps) {
             variant="ghost"
             size="icon"
             onClick={() => setIsEditing(true)}
-            className="h-8 w-8 text-gray-400 dark:text-gray-500 hover:text-blue-500"
+            className="h-8 w-8 text-gray-400 dark:text-white/50 hover:text-blue-500 dark:hover:text-accent-blue"
           >
             <Pencil className="w-4 h-4" />
           </Button>
@@ -95,7 +95,7 @@ export function WritingCard({ writing }: WritingCardProps) {
             size="icon"
             onClick={handleDelete}
             disabled={isDeleting}
-            className="h-8 w-8 text-gray-400 dark:text-gray-500 hover:text-red-500"
+            className="h-8 w-8 text-gray-400 dark:text-white/50 hover:text-red-500 dark:hover:text-red-400"
           >
             <Trash2 className="w-4 h-4" />
           </Button>

@@ -7,10 +7,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        new: 'bg-purple-100 text-purple-700',
-        learning: 'bg-orange-100 text-orange-700',
-        reviewing: 'bg-blue-100 text-blue-700',
-        mastered: 'bg-green-100 text-green-700',
+        new: 'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300',
+        learning: 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300',
+        reviewing: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
+        mastered: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
       },
     },
     defaultVariants: {

@@ -63,11 +63,11 @@ export function FlashcardPractice({ words: initialWords }: FlashcardPracticeProp
     const percentage = Math.round((results.correct / total) * 100)
 
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-8 text-center">
+      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center dark:glass-card dark:border-white/15">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Hoàn thành!</h2>
         <div className="mb-6">
-          <p className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">{percentage}%</p>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-4xl font-bold text-primary-600 dark:text-accent-pink mb-2">{percentage}%</p>
+          <p className="text-gray-600 dark:text-white/70">
             {results.correct}/{total} từ đúng
           </p>
         </div>
@@ -84,7 +84,7 @@ export function FlashcardPractice({ words: initialWords }: FlashcardPracticeProp
   return (
     <div className="space-y-6">
       {/* Progress */}
-      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-white/60">
         <span>Từ {currentIndex + 1} / {words.length}</span>
         <span className="text-green-600 dark:text-green-400">{results.correct} đúng</span>
       </div>
@@ -92,20 +92,20 @@ export function FlashcardPractice({ words: initialWords }: FlashcardPracticeProp
       {/* Flashcard */}
       <div
         onClick={handleFlip}
-        className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-8 min-h-[300px] flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition"
+        className="bg-white rounded-xl border border-gray-200 p-8 min-h-[300px] flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition dark:glass-card dark:border-white/15 dark:hover:border-white/25 dark:hover:shadow-accent-pink/10"
       >
         {!isFlipped ? (
           <>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{currentWord.word}</h2>
             {currentWord.phonetic && (
-              <p className="text-gray-500 dark:text-gray-400 mb-4">{currentWord.phonetic}</p>
+              <p className="text-gray-500 dark:text-white/60 mb-4">{currentWord.phonetic}</p>
             )}
             <AudioPlayer text={currentWord.word} />
-            <p className="text-sm text-gray-400 dark:text-gray-500 mt-6">Bấm để xem nghĩa</p>
+            <p className="text-sm text-gray-400 dark:text-white/40 mt-6">Bấm để xem nghĩa</p>
           </>
         ) : (
           <>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{currentWord.word}</p>
+            <p className="text-sm text-gray-500 dark:text-white/60 mb-2">{currentWord.word}</p>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{currentWord.definition}</h2>
           </>
         )}
@@ -117,14 +117,14 @@ export function FlashcardPractice({ words: initialWords }: FlashcardPracticeProp
           <Button
             variant="outline"
             onClick={() => handleResponse(false)}
-            className="flex-1 gap-2 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
+            className="flex-1 gap-2 border-red-300 dark:border-red-500/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
           >
             <X className="w-4 h-4" />
             Chưa nhớ
           </Button>
           <Button
             onClick={() => handleResponse(true)}
-            className="flex-1 gap-2 bg-green-600 hover:bg-green-700"
+            className="flex-1 gap-2 bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-500"
           >
             <Check className="w-4 h-4" />
             Đã nhớ

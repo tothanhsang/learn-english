@@ -57,7 +57,7 @@ export function TopicSelector({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Chủ đề</label>
+      <label className="text-sm font-medium text-gray-700 dark:text-white/80">Chủ đề</label>
 
       {/* Topic pills */}
       <div className="flex flex-wrap gap-2">
@@ -67,8 +67,8 @@ export function TopicSelector({
           onClick={() => onSelect(null)}
           className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
             selectedTopicId === null
-              ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 ring-2 ring-primary-500'
-              : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              ? 'bg-primary-100 dark:bg-accent-pink/20 text-primary-700 dark:text-accent-pink ring-2 ring-primary-500 dark:ring-accent-pink'
+              : 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/70 hover:bg-gray-200 dark:hover:bg-white/15'
           }`}
         >
           Tất cả
@@ -85,7 +85,7 @@ export function TopicSelector({
               onClick={() => onSelect(topic.id)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition flex items-center gap-1.5 ${
                 colors.bg
-              } ${colors.text} ${isSelected ? `ring-2 ring-offset-1 ${colors.border}` : 'hover:opacity-80'}`}
+              } ${colors.text} ${isSelected ? `ring-2 ring-offset-1 ${colors.border} dark:ring-offset-transparent` : 'hover:opacity-80'}`}
             >
               <span>{topic.icon}</span>
               <span>{topic.name}</span>
@@ -98,7 +98,7 @@ export function TopicSelector({
           <button
             type="button"
             onClick={() => setIsCreating(true)}
-            className="px-3 py-1.5 rounded-full text-sm font-medium bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 border border-dashed border-gray-300 dark:border-gray-600 flex items-center gap-1"
+            className="px-3 py-1.5 rounded-full text-sm font-medium bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-white/50 hover:bg-gray-100 dark:hover:bg-white/10 border border-dashed border-gray-300 dark:border-white/20 flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" />
             Thêm
@@ -108,7 +108,7 @@ export function TopicSelector({
 
       {/* Create new topic form */}
       {isCreating && (
-        <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 space-y-3">
+        <div className="p-3 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 space-y-3">
           <div className="flex gap-2">
             <Input
               placeholder="Tên chủ đề..."
@@ -143,7 +143,7 @@ export function TopicSelector({
                 type="button"
                 onClick={() => setSelectedIcon(icon)}
                 className={`w-8 h-8 rounded flex items-center justify-center text-lg ${
-                  selectedIcon === icon ? 'bg-primary-100 dark:bg-primary-900/50 ring-2 ring-primary-500' : 'hover:bg-gray-100 dark:hover:bg-gray-600'
+                  selectedIcon === icon ? 'bg-primary-100 dark:bg-accent-pink/20 ring-2 ring-primary-500 dark:ring-accent-pink' : 'hover:bg-gray-100 dark:hover:bg-white/10'
                 }`}
               >
                 {icon}
@@ -159,7 +159,7 @@ export function TopicSelector({
                 type="button"
                 onClick={() => setSelectedColor(color.name)}
                 className={`w-6 h-6 rounded-full ${color.bg} ${
-                  selectedColor === color.name ? 'ring-2 ring-offset-1 ring-gray-400' : ''
+                  selectedColor === color.name ? 'ring-2 ring-offset-1 ring-gray-400 dark:ring-offset-transparent' : ''
                 }`}
               />
             ))}

@@ -115,11 +115,11 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Viết đoạn văn</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto dark:glass dark:bg-white/10 dark:border-white/20">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-white/10 sticky top-0 bg-white dark:bg-transparent dark:backdrop-blur-xl z-10 rounded-t-2xl">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Viết đoạn văn</h2>
+          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 dark:text-white/60 dark:hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -133,7 +133,7 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
 
           {/* Date picker with quick buttons */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-white/80 flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               Ngày viết
             </label>
@@ -143,8 +143,8 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
                 onClick={() => setWrittenDate(getToday())}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
                   writtenDate === getToday()
-                    ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 ring-2 ring-primary-500'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-primary-100 dark:bg-accent-pink/20 text-primary-700 dark:text-accent-pink ring-2 ring-primary-500 dark:ring-accent-pink'
+                    : 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/70 hover:bg-gray-200 dark:hover:bg-white/15'
                 }`}
               >
                 Hôm nay
@@ -154,8 +154,8 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
                 onClick={() => setWrittenDate(getYesterday())}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
                   writtenDate === getYesterday()
-                    ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 ring-2 ring-primary-500'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-primary-100 dark:bg-accent-pink/20 text-primary-700 dark:text-accent-pink ring-2 ring-primary-500 dark:ring-accent-pink'
+                    : 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/70 hover:bg-gray-200 dark:hover:bg-white/15'
                 }`}
               >
                 Hôm qua
@@ -166,10 +166,10 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
                 value={writtenDate}
                 onChange={(e) => setWrittenDate(e.target.value)}
                 max={getToday()}
-                className="flex-1 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="flex-1 px-3 py-1.5 border border-gray-300 dark:border-white/15 rounded-lg text-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white"
               />
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(writtenDate)}</p>
+            <p className="text-xs text-gray-500 dark:text-white/50">{formatDate(writtenDate)}</p>
           </div>
 
           {/* Topic selector */}
@@ -182,8 +182,8 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
 
           {/* Title (optional) */}
           <div className="space-y-1.5">
-            <label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Tiêu đề <span className="text-gray-400 dark:text-gray-500 font-normal">(tùy chọn)</span>
+            <label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-white/80">
+              Tiêu đề <span className="text-gray-400 dark:text-white/40 font-normal">(tùy chọn)</span>
             </label>
             <Input
               id="title"
@@ -197,10 +197,10 @@ export function AddWritingForm({ topics, onTopicsChange }: AddWritingFormProps) 
           {/* Content */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label htmlFor="content" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Nội dung <span className="text-red-500">*</span>
+              <label htmlFor="content" className="text-sm font-medium text-gray-700 dark:text-white/80">
+                Nội dung <span className="text-red-500 dark:text-accent-pink">*</span>
               </label>
-              <span className="text-xs text-gray-400 dark:text-gray-500">{wordCount} từ</span>
+              <span className="text-xs text-gray-400 dark:text-white/40">{wordCount} từ</span>
             </div>
             <Textarea
               id="content"

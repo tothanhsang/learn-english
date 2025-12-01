@@ -47,20 +47,20 @@ export function PracticePanel({ wordCount }: PracticePanelProps) {
         {practiceItems.map((item) => {
           const Icon = item.icon
           const content = (
-            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition dark:bg-white/5 dark:hover:bg-white/10">
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.color}`}>
                   <Icon className="w-4 h-4" />
                 </div>
-                <span className="font-medium text-gray-900">{item.label}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{item.label}</span>
                 {item.label === 'FlashCard' && (
-                  <span className="text-xs text-gray-500">({wordCount})</span>
+                  <span className="text-xs text-gray-500 dark:text-white/50">({wordCount})</span>
                 )}
               </div>
               {item.available ? (
                 <CheckCircle className="w-5 h-5 text-green-500" />
               ) : (
-                <span className="text-xs text-gray-400">Sắp ra mắt</span>
+                <span className="text-xs text-gray-400 dark:text-white/40">Sắp ra mắt</span>
               )}
             </div>
           )
@@ -76,8 +76,8 @@ export function PracticePanel({ wordCount }: PracticePanelProps) {
           return <div key={item.label} className="opacity-60 cursor-not-allowed">{content}</div>
         })}
 
-        <p className="text-xs text-gray-500 text-center pt-2">
-          Tập luyện càng nhiều, tiến bộ càng nhanh! 💪
+        <p className="text-xs text-gray-500 dark:text-white/50 text-center pt-2">
+          Tập luyện càng nhiều, tiến bộ càng nhanh!
         </p>
       </CardContent>
     </Card>

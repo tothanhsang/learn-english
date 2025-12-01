@@ -52,8 +52,8 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
   const sortedDates = Array.from(groupedWords.keys()).sort((a, b) => b.localeCompare(a))
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden sticky top-4">
-      <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden sticky top-4 dark:glass-card dark:border-white/15">
+      <div className="px-3 py-2 border-b border-gray-200 bg-gray-50 dark:bg-white/5 dark:border-white/10">
         <h3 className="font-medium text-gray-900 dark:text-white text-xs flex items-center gap-1.5">
           <Calendar className="w-3.5 h-3.5" />
           Theo ngày
@@ -65,8 +65,8 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
         <button
           onClick={() => onSelectDate(null)}
           className={cn(
-            'w-full px-3 py-2 flex items-center justify-between text-left text-xs transition hover:bg-gray-50 dark:hover:bg-gray-700',
-            selectedDate === null && 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium'
+            'w-full px-3 py-2 flex items-center justify-between text-left text-xs transition hover:bg-gray-50 dark:hover:bg-white/5',
+            selectedDate === null && 'bg-primary-50 dark:bg-accent-pink/10 text-primary-700 dark:text-accent-pink font-medium'
           )}
         >
           <span className="flex items-center gap-1.5">
@@ -75,7 +75,7 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
           </span>
           <span className={cn(
             'text-[10px] px-1.5 py-0.5 rounded-full min-w-[20px] text-center',
-            selectedDate === null ? 'bg-primary-100 dark:bg-primary-800 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
+            selectedDate === null ? 'bg-primary-100 dark:bg-accent-pink/20 text-primary-700 dark:text-accent-pink' : 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60'
           )}>
             {words.length}
           </span>
@@ -91,8 +91,8 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
               key={date}
               onClick={() => onSelectDate(date)}
               className={cn(
-                'w-full px-3 py-2 flex items-center justify-between text-left text-xs transition hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-100 dark:border-gray-700',
-                isSelected && 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium'
+                'w-full px-3 py-2 flex items-center justify-between text-left text-xs transition hover:bg-gray-50 dark:hover:bg-white/5 border-t border-gray-100 dark:border-white/5',
+                isSelected && 'bg-primary-50 dark:bg-accent-pink/10 text-primary-700 dark:text-accent-pink font-medium'
               )}
             >
               <span className="flex items-center gap-1.5 truncate">
@@ -101,7 +101,7 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
               </span>
               <span className={cn(
                 'text-[10px] px-1.5 py-0.5 rounded-full min-w-[20px] text-center flex-shrink-0',
-                isSelected ? 'bg-primary-100 dark:bg-primary-800 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
+                isSelected ? 'bg-primary-100 dark:bg-accent-pink/20 text-primary-700 dark:text-accent-pink' : 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60'
               )}>
                 {dateWords.length}
               </span>
@@ -110,7 +110,7 @@ export function DaySidebar({ words, selectedDate, onSelectDate }: DaySidebarProp
         })}
 
         {sortedDates.length === 0 && (
-          <p className="p-3 text-xs text-gray-500 dark:text-gray-400 text-center">
+          <p className="p-3 text-xs text-gray-500 dark:text-white/50 text-center">
             Chưa có từ vựng
           </p>
         )}

@@ -61,15 +61,15 @@ function StatItem({
   color: 'purple' | 'orange' | 'blue' | 'green'
 }) {
   const colorClasses = {
-    purple: 'text-purple-600',
-    orange: 'text-orange-600',
-    blue: 'text-blue-600',
-    green: 'text-green-600',
+    purple: 'text-purple-600 dark:text-purple-400',
+    orange: 'text-orange-600 dark:text-orange-400',
+    blue: 'text-blue-600 dark:text-accent-blue',
+    green: 'text-green-600 dark:text-green-400',
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-center">
-      <p className="text-[10px] text-gray-500 dark:text-gray-400">{label}</p>
+    <div className="bg-gray-50 dark:bg-white/5 rounded-lg p-2 text-center">
+      <p className="text-[10px] text-gray-500 dark:text-white/50">{label}</p>
       <p className={`text-lg font-bold ${colorClasses[color]}`}>{value}</p>
     </div>
   )

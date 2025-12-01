@@ -25,7 +25,7 @@ export function VocabularyTabs({ learningWords, reviewWords, addWordButton }: Vo
             onClick={() => setActiveTab('learning')}
             className={cn(
               'text-lg font-semibold transition',
-              activeTab === 'learning' ? 'text-orange-500' : 'text-gray-400 hover:text-gray-600'
+              activeTab === 'learning' ? 'text-orange-500 dark:text-accent-pink' : 'text-gray-400 hover:text-gray-600 dark:text-white/50 dark:hover:text-white/80'
             )}
           >
             Đang học
@@ -35,7 +35,7 @@ export function VocabularyTabs({ learningWords, reviewWords, addWordButton }: Vo
             onClick={() => setActiveTab('review')}
             className={cn(
               'text-lg font-semibold transition',
-              activeTab === 'review' ? 'text-orange-500' : 'text-gray-400 hover:text-gray-600'
+              activeTab === 'review' ? 'text-orange-500 dark:text-accent-pink' : 'text-gray-400 hover:text-gray-600 dark:text-white/50 dark:hover:text-white/80'
             )}
           >
             Ôn tập
@@ -50,11 +50,11 @@ export function VocabularyTabs({ learningWords, reviewWords, addWordButton }: Vo
 
       {/* Word grid */}
       {words.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-          <p className="text-gray-500">
+        <div className="text-center py-12 bg-white rounded-xl border border-gray-200 dark:glass-card dark:border-white/10">
+          <p className="text-gray-500 dark:text-white/60">
             {activeTab === 'learning' ? 'Chưa có từ nào đang học.' : 'Chưa có từ nào cần ôn tập.'}
           </p>
-          <p className="text-gray-400 text-sm mt-1">Bấm "Thêm Từ Mới" để bắt đầu!</p>
+          <p className="text-gray-400 dark:text-white/40 text-sm mt-1">Bấm "Thêm Từ Mới" để bắt đầu!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">

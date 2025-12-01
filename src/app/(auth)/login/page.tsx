@@ -21,11 +21,17 @@ export default function LoginPage() {
   console.log(state);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 transition-colors">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-transparent px-4 transition-colors relative">
+      {/* Floating orbs for dark mode background effect */}
+      <div className="hidden dark:block fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-accent-pink/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent-blue/20 rounded-full blur-3xl animate-float-delayed" />
+      </div>
+
       <div className="w-full max-w-md space-y-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition"
+          className="inline-flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition"
         >
           <ArrowLeft className="w-4 h-4" />
           Trang chủ
@@ -33,7 +39,7 @@ export default function LoginPage() {
 
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Đăng nhập</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">Chào mừng bạn quay trở lại</p>
+          <p className="mt-2 text-gray-600 dark:text-white/60">Chào mừng bạn quay trở lại</p>
         </div>
 
         <form action={formAction} className="space-y-4">
@@ -46,7 +52,7 @@ export default function LoginPage() {
           <div className="space-y-2">
             <label
               htmlFor="email"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="text-sm font-medium text-gray-700 dark:text-white/80"
             >
               Email
             </label>
@@ -62,7 +68,7 @@ export default function LoginPage() {
           <div className="space-y-2">
             <label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="text-sm font-medium text-gray-700 dark:text-white/80"
             >
               Mật khẩu
             </label>
@@ -78,11 +84,11 @@ export default function LoginPage() {
           <SubmitButton />
         </form>
 
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-center text-sm text-gray-600 dark:text-white/60">
           Chưa có tài khoản?{" "}
           <Link
             href="/signup"
-            className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
+            className="text-primary-600 dark:text-accent-pink hover:underline font-medium"
           >
             Đăng ký ngay
           </Link>

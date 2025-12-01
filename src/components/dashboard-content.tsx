@@ -72,45 +72,45 @@ export function DashboardContent({ words, phrases, writings, topics, stats, phra
       {/* Main content (takes most space) */}
       <div className="flex-1 min-w-0 space-y-3">
         {/* Main tab switcher: Words vs Phrases */}
-        <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
+        <div className="flex items-center gap-1 bg-gray-100 dark:glass-subtle dark:bg-white/5 p-1 rounded-xl w-fit">
           <button
             onClick={() => setMainTab('words')}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition',
+              'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition',
               mainTab === 'words'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
+                : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
             )}
           >
             <BookOpen className="w-4 h-4" />
             Từ vựng
-            <span className="text-xs text-gray-400 dark:text-gray-500">({words.length})</span>
+            <span className="text-xs text-gray-400 dark:text-white/40">({words.length})</span>
           </button>
           <button
             onClick={() => setMainTab('phrases')}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition',
+              'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition',
               mainTab === 'phrases'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
+                : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
             )}
           >
             <MessageSquareQuote className="w-4 h-4" />
             Cụm từ
-            <span className="text-xs text-gray-400 dark:text-gray-500">({phrases.length})</span>
+            <span className="text-xs text-gray-400 dark:text-white/40">({phrases.length})</span>
           </button>
           <button
             onClick={() => setMainTab('writings')}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition',
+              'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition',
               mainTab === 'writings'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                ? 'bg-white dark:bg-white/15 text-gray-900 dark:text-white shadow-sm dark:shadow-accent-pink/10'
+                : 'text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10'
             )}
           >
             <FileText className="w-4 h-4" />
             Bài viết
-            <span className="text-xs text-gray-400 dark:text-gray-500">({writings.length})</span>
+            <span className="text-xs text-gray-400 dark:text-white/40">({writings.length})</span>
           </button>
         </div>
 
@@ -197,8 +197,8 @@ function PhrasesContent({
           className={cn(
             'px-3 py-1.5 rounded-full text-sm font-medium transition',
             selectedTopicId === null
-              ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500 dark:bg-accent-pink/20 dark:text-accent-pink dark:ring-accent-pink'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/15'
           )}
         >
           Tất cả
@@ -210,8 +210,8 @@ function PhrasesContent({
             className={cn(
               'px-3 py-1.5 rounded-full text-sm font-medium transition flex items-center gap-1.5',
               selectedTopicId === topic.id
-                ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500 dark:bg-accent-pink/20 dark:text-accent-pink dark:ring-accent-pink'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/15'
             )}
           >
             <span>{topic.icon}</span>
@@ -227,7 +227,7 @@ function PhrasesContent({
             onClick={() => setActiveTab('learning')}
             className={cn(
               'text-lg font-semibold transition',
-              activeTab === 'learning' ? 'text-orange-500' : 'text-gray-400 hover:text-gray-600'
+              activeTab === 'learning' ? 'text-orange-500 dark:text-accent-pink' : 'text-gray-400 hover:text-gray-600 dark:text-white/50 dark:hover:text-white/80'
             )}
           >
             Đang học
@@ -237,7 +237,7 @@ function PhrasesContent({
             onClick={() => setActiveTab('review')}
             className={cn(
               'text-lg font-semibold transition',
-              activeTab === 'review' ? 'text-orange-500' : 'text-gray-400 hover:text-gray-600'
+              activeTab === 'review' ? 'text-orange-500 dark:text-accent-pink' : 'text-gray-400 hover:text-gray-600 dark:text-white/50 dark:hover:text-white/80'
             )}
           >
             Ôn tập
@@ -250,11 +250,11 @@ function PhrasesContent({
 
       {/* Phrase grid */}
       {phrases.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-          <p className="text-gray-500">
+        <div className="text-center py-12 bg-white rounded-xl border border-gray-200 dark:glass-card dark:border-white/10">
+          <p className="text-gray-500 dark:text-white/60">
             {activeTab === 'learning' ? 'Chưa có cụm từ nào đang học.' : 'Chưa có cụm từ nào cần ôn tập.'}
           </p>
-          <p className="text-gray-400 text-sm mt-1">Bấm "Thêm Cụm Từ" để bắt đầu!</p>
+          <p className="text-gray-400 dark:text-white/40 text-sm mt-1">Bấm "Thêm Cụm Từ" để bắt đầu!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -279,18 +279,18 @@ function WritingsContent({ writings, topics, onTopicsChange }: WritingsContentPr
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           Bài viết hàng ngày
-          <span className="ml-2 text-sm font-normal text-gray-400">({writings.length})</span>
+          <span className="ml-2 text-sm font-normal text-gray-400 dark:text-white/40">({writings.length})</span>
         </h2>
         <AddWritingForm topics={topics} onTopicsChange={onTopicsChange} />
       </div>
 
       {/* Writing list */}
       {writings.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-          <p className="text-gray-500">Chưa có bài viết nào.</p>
-          <p className="text-gray-400 text-sm mt-1">Bấm "Viết bài" để bắt đầu!</p>
+        <div className="text-center py-12 bg-white rounded-xl border border-gray-200 dark:glass-card dark:border-white/10">
+          <p className="text-gray-500 dark:text-white/60">Chưa có bài viết nào.</p>
+          <p className="text-gray-400 dark:text-white/40 text-sm mt-1">Bấm "Viết bài" để bắt đầu!</p>
         </div>
       ) : (
         <div className="space-y-4">

@@ -110,11 +110,11 @@ export function AddPhraseForm({ topics, onTopicsChange }: AddPhraseFormProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Thêm cụm từ mới</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto dark:glass dark:bg-white/10 dark:border-white/20">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-white/10 sticky top-0 bg-white dark:bg-transparent dark:backdrop-blur-xl z-10 rounded-t-2xl">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Thêm cụm từ mới</h2>
+          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 dark:text-white/60 dark:hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -136,8 +136,8 @@ export function AddPhraseForm({ topics, onTopicsChange }: AddPhraseFormProps) {
 
           {/* Phrase input */}
           <div className="space-y-1.5">
-            <label htmlFor="phrase" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Cụm từ <span className="text-red-500">*</span>
+            <label htmlFor="phrase" className="text-sm font-medium text-gray-700 dark:text-white/80">
+              Cụm từ <span className="text-red-500 dark:text-accent-pink">*</span>
             </label>
             <Input
               id="phrase"
@@ -152,8 +152,8 @@ export function AddPhraseForm({ topics, onTopicsChange }: AddPhraseFormProps) {
 
           {/* English meaning */}
           <div className="space-y-1.5">
-            <label htmlFor="meaning" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Nghĩa (EN) <span className="text-red-500">*</span>
+            <label htmlFor="meaning" className="text-sm font-medium text-gray-700 dark:text-white/80">
+              Nghĩa (EN) <span className="text-red-500 dark:text-accent-pink">*</span>
             </label>
             <Textarea
               id="meaning"
@@ -168,31 +168,31 @@ export function AddPhraseForm({ topics, onTopicsChange }: AddPhraseFormProps) {
 
           {/* Vietnamese meaning - Auto-generated */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-white/80 flex items-center gap-2">
               Nghĩa (VI)
-              <span className="text-xs text-gray-400 dark:text-gray-500 font-normal">tự động</span>
+              <span className="text-xs text-gray-400 dark:text-white/40 font-normal">tự động</span>
               <StatusIcon status={translateStatus} />
             </label>
             <input type="hidden" name="meaning_vi" value={meaningVi} />
-            <div className={`p-2.5 border rounded-lg text-sm min-h-[42px] ${
-              translateStatus === 'loading' ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
+            <div className={`p-2.5 border rounded-xl text-sm min-h-[42px] ${
+              translateStatus === 'loading' ? 'bg-blue-50 border-blue-200 dark:bg-accent-blue/10 dark:border-accent-blue/30' : 'bg-gray-50 border-gray-200 dark:bg-white/5 dark:border-white/10'
             }`}>
               {translateStatus === 'loading' ? (
-                <span className="text-blue-500 dark:text-blue-400 flex items-center gap-2">
+                <span className="text-blue-500 dark:text-accent-blue flex items-center gap-2">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   Đang dịch...
                 </span>
               ) : meaningVi ? (
-                <span className="text-gray-700 dark:text-gray-300">{meaningVi}</span>
+                <span className="text-gray-700 dark:text-white/80">{meaningVi}</span>
               ) : (
-                <span className="text-gray-400 dark:text-gray-500 italic">—</span>
+                <span className="text-gray-400 dark:text-white/40 italic">—</span>
               )}
             </div>
           </div>
 
           {/* Example sentence */}
           <div className="space-y-1.5">
-            <label htmlFor="example_sentence" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label htmlFor="example_sentence" className="text-sm font-medium text-gray-700 dark:text-white/80">
               Ví dụ
             </label>
             <Textarea
