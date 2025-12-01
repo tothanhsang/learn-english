@@ -84,6 +84,68 @@ export interface Writing {
   topic?: Topic | null
 }
 
+// IELTS Types
+export type IELTSSkill = 'listening' | 'reading' | 'writing' | 'speaking'
+export type MilestoneType = 'practice_test' | 'mock_exam' | 'achievement' | 'note'
+
+export interface IELTSPlan {
+  id: string
+  user_id: string
+  name: string
+  exam_date: string | null
+  target_listening: number | null
+  target_reading: number | null
+  target_writing: number | null
+  target_speaking: number | null
+  target_overall: number | null
+  current_listening: number | null
+  current_reading: number | null
+  current_writing: number | null
+  current_speaking: number | null
+  current_overall: number | null
+  study_hours_per_day: number
+  notes: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface IELTSSession {
+  id: string
+  plan_id: string
+  user_id: string
+  skill: IELTSSkill
+  duration_minutes: number
+  activity: string | null
+  notes: string | null
+  session_date: string
+  created_at: string
+}
+
+export interface IELTSMilestone {
+  id: string
+  plan_id: string
+  user_id: string
+  milestone_type: MilestoneType
+  listening_score: number | null
+  reading_score: number | null
+  writing_score: number | null
+  speaking_score: number | null
+  overall_score: number | null
+  title: string | null
+  notes: string | null
+  milestone_date: string
+  created_at: string
+}
+
+export interface IELTSStats {
+  totalStudyMinutes: number
+  studyMinutesBySkill: Record<IELTSSkill, number>
+  sessionsThisWeek: number
+  currentStreak: number
+  daysUntilExam: number | null
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -111,6 +173,21 @@ export interface Database {
         Row: Writing
         Insert: Omit<Writing, 'id' | 'created_at' | 'updated_at' | 'word_count' | 'topic'>
         Update: Partial<Omit<Writing, 'id' | 'created_at' | 'updated_at' | 'word_count' | 'topic'>>
+      }
+      ielts_plans: {
+        Row: IELTSPlan
+        Insert: Omit<IELTSPlan, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<IELTSPlan, 'id' | 'created_at' | 'updated_at'>>
+      }
+      ielts_sessions: {
+        Row: IELTSSession
+        Insert: Omit<IELTSSession, 'id' | 'created_at'>
+        Update: Partial<Omit<IELTSSession, 'id' | 'created_at'>>
+      }
+      ielts_milestones: {
+        Row: IELTSMilestone
+        Insert: Omit<IELTSMilestone, 'id' | 'created_at'>
+        Update: Partial<Omit<IELTSMilestone, 'id' | 'created_at'>>
       }
     }
   }
