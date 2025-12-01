@@ -230,7 +230,7 @@ export function AddWordForm() {
           {/* English definition */}
           <div className="space-y-1.5">
             <label htmlFor="definition" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              EN <span className="text-red-500">*</span>
+              Nghĩa tiếng Việt
               {lookupStatus === 'loading' && <Loader2 className="w-3 h-3 animate-spin text-gray-400" />}
             </label>
             <Textarea
@@ -240,15 +240,13 @@ export function AddWordForm() {
               value={definition}
               onChange={(e) => setDefinition(e.target.value)}
               rows={2}
-              required
             />
           </div>
 
           {/* Vietnamese definition - Auto-generated */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              VI
-              <span className="text-xs text-gray-400 font-normal">tự động</span>
+              Nghĩa tiếng Việt (Auto)
               <StatusIcon status={translateStatus} />
             </label>
             <input type="hidden" name="definition_vi" value={definitionVi} />
