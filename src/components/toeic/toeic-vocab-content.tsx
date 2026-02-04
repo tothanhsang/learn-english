@@ -12,10 +12,10 @@ import {
   Search,
   Check,
   X,
-  Volume2,
   Shuffle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { AudioPlayer } from "@/components/audio-player"
 import { ToeicVocabWord } from "@/types/toeic"
 
 interface ToeicVocabContentProps {
@@ -101,15 +101,6 @@ function TabButton({
   )
 }
 
-// Audio helper
-function playAudio(text: string) {
-  if (typeof window !== "undefined" && window.speechSynthesis) {
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = "en-US"
-    utterance.rate = 0.9
-    window.speechSynthesis.speak(utterance)
-  }
-}
 
 // Study View
 function StudyView({ vocabulary }: { vocabulary: ToeicVocabWord[] }) {
@@ -143,14 +134,9 @@ function StudyView({ vocabulary }: { vocabulary: ToeicVocabWord[] }) {
             className="bg-white dark:glass-card p-6 rounded-2xl border border-gray-100 dark:border-white/10 hover:shadow-md dark:hover:shadow-accent-pink/10 transition-shadow group"
           >
             <div className="flex justify-between items-start mb-3">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white">{item.word}</h3>
-                <button
-                  onClick={() => playAudio(item.word)}
-                  className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 dark:text-white/40 hover:text-primary-600 dark:hover:text-accent-pink transition-colors"
-                >
-                  <Volume2 size={16} />
-                </button>
+                <AudioPlayer text={item.word} />
               </div>
               <span className="text-xs font-semibold px-2 py-1 bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-white/60 rounded uppercase tracking-wider">
                 {item.part_of_speech}
@@ -220,15 +206,9 @@ function FlashcardsView({ vocabulary }: { vocabulary: ToeicVocabWord[] }) {
               {current.word}
             </h2>
             <p className="mt-4 text-gray-400 dark:text-white/60 font-medium">{current.part_of_speech}</p>
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                playAudio(current.word)
-              }}
-              className="mt-4 p-3 rounded-full bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-600 dark:text-white/80 transition-colors"
-            >
-              <Volume2 size={24} />
-            </button>
+            <div onClick={(e) => e.stopPropagation()} className="mt-4">
+              <AudioPlayer text={current.word} />
+            </div>
             <p className="mt-8 text-gray-300 dark:text-white/30 text-sm">Bấm để xem nghĩa</p>
           </div>
           {/* Back */}
