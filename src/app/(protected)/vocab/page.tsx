@@ -1,23 +1,9 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -25,19 +11,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import {
+  BookOpen,
   Check,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Dices,
   Flame,
-  GraduationCap,
-  ListChecks,
+  Layers,
+  RotateCcw,
   Search,
+  Settings,
   Shuffle,
-  Sparkles,
-  Volume2,
   X,
 } from "lucide-react"
+import { AudioPlayer } from "@/components/audio-player"
 
 const LESSON = "Job Advertising and Recruiting"
 
@@ -177,11 +164,7 @@ function clamp(n: number, a: number, b: number): number {
 }
 
 function normalizeAnswer(s: string): string {
-  return (s || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .replace(/['']/g, "'")
+  return (s || "").trim().toLowerCase().replace(/\s+/g, " ").replace(/['']/g, "'")
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -195,9 +178,7 @@ function shuffle<T>(arr: T[]): T[] {
 
 function todayKey(): string {
   const d = new Date()
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
 }
 
 function loadProgress(): Progress | null {
@@ -215,9 +196,7 @@ function saveProgress(p: Progress): void {
   if (typeof window === "undefined") return
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(p))
-  } catch {
-    // ignore
-  }
+  } catch {}
 }
 
 function initProgress(): Progress {
@@ -229,7 +208,6 @@ function initProgress(): Progress {
     totalReviews: 0,
     items: {},
   }
-
   for (const w of WORDS) {
     base.items[w.id] = {
       id: w.id,
@@ -243,14 +221,12 @@ function initProgress(): Progress {
       lastReviewedAt: null,
     }
   }
-
   return base
 }
 
 function computeNext(item: ProgressItem, grade: number): ProgressItem {
   const now = Date.now()
   const next = { ...item }
-
   next.lastReviewedAt = now
   next.lastResult = grade
 
@@ -264,7 +240,6 @@ function computeNext(item: ProgressItem, grade: number): ProgressItem {
   }
 
   next.correct += 1
-
   const ease = next.ease + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02))
   next.ease = clamp(ease, 1.3, 2.7)
 
@@ -274,20 +249,6 @@ function computeNext(item: ProgressItem, grade: number): ProgressItem {
 
   next.dueAt = now + next.intervalDays * 24 * 60 * 60 * 1000
   return next
-}
-
-function speak(text: string): void {
-  try {
-    if (typeof window === "undefined" || !window.speechSynthesis) return
-    window.speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(text)
-    u.rate = 0.95
-    u.pitch = 1
-    u.lang = "en-US"
-    window.speechSynthesis.speak(u)
-  } catch {
-    // ignore
-  }
 }
 
 function pct(n: number, d: number): number {
@@ -314,18 +275,43 @@ function getMastery(item: ProgressItem): Mastery {
   return "struggling"
 }
 
-function masteryBadge(m: Mastery): { label: string; variant: "default" | "secondary" | "destructive" | "outline" } {
-  if (m === "mastered") return { label: "Mastered", variant: "default" }
-  if (m === "learning") return { label: "Learning", variant: "secondary" }
+function masteryBadge(m: Mastery): { label: string; variant: "new" | "learning" | "mastered" | "destructive" } {
+  if (m === "mastered") return { label: "Mastered", variant: "mastered" }
+  if (m === "learning") return { label: "Learning", variant: "learning" }
   if (m === "struggling") return { label: "Struggling", variant: "destructive" }
-  return { label: "New", variant: "outline" }
+  return { label: "New", variant: "new" }
 }
 
-type Mode = "study" | "quiz" | "list"
-type Filter = "all" | "due" | "new" | "learning" | "mastered" | "struggling"
+type TabType = "study" | "cards" | "quiz"
+
+function TabButton({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: React.ReactNode
+  label: string
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium flex-1 justify-center ${
+        active
+          ? "bg-white dark:bg-white/10 text-primary-600 dark:text-accent-pink shadow-sm"
+          : "text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white"
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  )
+}
 
 export default function VocabLearningPage() {
-  const [mode, setMode] = useState<Mode>("study")
+  const [activeTab, setActiveTab] = useState<TabType>("study")
   const [progress, setProgress] = useState<Progress>(() => {
     const loaded = loadProgress()
     if (loaded?.items) return loaded
@@ -340,19 +326,13 @@ export default function VocabLearningPage() {
 
   const [index, setIndex] = useState(0)
   const [showBack, setShowBack] = useState(false)
-  const [search, setSearch] = useState("")
-  const [filter, setFilter] = useState<Filter>("all")
-
+  const [searchTerm, setSearchTerm] = useState("")
   const [quizInput, setQuizInput] = useState("")
   const [quizResult, setQuizResult] = useState<{ ok: boolean; expected: string } | null>(null)
-
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   const activeId = studyQueue[index] || WORDS[0].id
-  const activeWord = useMemo(
-    () => WORDS.find((w) => w.id === activeId) || WORDS[0],
-    [activeId]
-  )
+  const activeWord = useMemo(() => WORDS.find((w) => w.id === activeId) || WORDS[0], [activeId])
   const activeItem = progress.items[activeId]
 
   const dueCount = useMemo(() => getDueIds(progress).length, [progress])
@@ -364,20 +344,9 @@ export default function VocabLearningPage() {
     const learning = items.filter((i) => getMastery(i) === "learning").length
     const struggling = items.filter((i) => getMastery(i) === "struggling").length
     const fresh = items.filter((i) => getMastery(i) === "new").length
-
     const totalCorrect = items.reduce((a, b) => a + b.correct, 0)
     const totalWrong = items.reduce((a, b) => a + b.wrong, 0)
-
-    return {
-      total,
-      mastered,
-      learning,
-      struggling,
-      fresh,
-      totalCorrect,
-      totalWrong,
-      accuracy: pct(totalCorrect, totalCorrect + totalWrong),
-    }
+    return { total, mastered, learning, struggling, fresh, totalCorrect, totalWrong, accuracy: pct(totalCorrect, totalCorrect + totalWrong) }
   }, [progress])
 
   useEffect(() => {
@@ -389,20 +358,15 @@ export default function VocabLearningPage() {
     setProgress((p) => {
       const next = { ...p }
       if (next.lastStudyDay === today) return next
-
       const last = next.lastStudyDay
       const dToday = new Date(today)
       const dLast = last ? new Date(last) : null
-
       let newStreak = 1
       if (dLast) {
-        const diffDays = Math.round(
-          (dToday.getTime() - dLast.getTime()) / (24 * 60 * 60 * 1000)
-        )
+        const diffDays = Math.round((dToday.getTime() - dLast.getTime()) / (24 * 60 * 60 * 1000))
         if (diffDays === 1) newStreak = (next.streak || 0) + 1
         else newStreak = 1
       }
-
       next.streak = newStreak
       next.lastStudyDay = today
       return next
@@ -411,7 +375,6 @@ export default function VocabLearningPage() {
 
   function gradeCard(grade: number) {
     bumpStreak()
-
     setProgress((p) => {
       const next = { ...p, items: { ...p.items } }
       const cur = next.items[activeId]
@@ -419,9 +382,7 @@ export default function VocabLearningPage() {
       next.totalReviews = (next.totalReviews || 0) + 1
       return next
     })
-
     setShowBack(false)
-
     setIndex((i) => {
       const ni = i + 1
       if (ni >= studyQueue.length) {
@@ -452,16 +413,6 @@ export default function VocabLearningPage() {
     setShowBack(false)
   }
 
-  function goPrev() {
-    setIndex((i) => Math.max(0, i - 1))
-    setShowBack(false)
-  }
-
-  function goNext() {
-    setIndex((i) => Math.min(studyQueue.length - 1, i + 1))
-    setShowBack(false)
-  }
-
   function startDueSession() {
     const due = getDueIds(progress)
     if (!due.length) {
@@ -471,43 +422,24 @@ export default function VocabLearningPage() {
     }
     setIndex(0)
     setShowBack(false)
-    setMode("study")
+    setActiveTab("cards")
   }
 
-  const filteredList = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    const now = Date.now()
-
+  const filteredWords = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase()
     return WORDS.filter((w) => {
-      const it = progress.items[w.id]
-      const m = getMastery(it)
-
-      if (filter === "due" && !(it.dueAt <= now)) return false
-      if (filter === "new" && m !== "new") return false
-      if (filter === "learning" && m !== "learning") return false
-      if (filter === "mastered" && m !== "mastered") return false
-      if (filter === "struggling" && m !== "struggling") return false
-
       if (!q) return true
-      return (
-        w.word.toLowerCase().includes(q) ||
-        w.definition.toLowerCase().includes(q) ||
-        w.example_a.toLowerCase().includes(q) ||
-        w.example_b.toLowerCase().includes(q)
-      )
+      return w.word.toLowerCase().includes(q) || w.definition.toLowerCase().includes(q)
     })
-  }, [search, filter, progress])
+  }, [searchTerm])
 
   function quizCheck() {
     const expected = normalizeAnswer(activeWord.word)
     const got = normalizeAnswer(quizInput)
     const ok = got === expected
-
     setQuizResult({ ok, expected: activeWord.word })
-
     const grade = ok ? 5 : 2
     gradeCard(grade)
-
     setQuizInput("")
   }
 
@@ -515,641 +447,344 @@ export default function VocabLearningPage() {
   const badge = masteryBadge(mastery)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950 text-zinc-900 dark:text-white">
-      <div className="mx-auto w-full max-w-6xl px-4 py-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border bg-white dark:bg-white/5 px-3 py-1 text-sm shadow-sm">
-              <GraduationCap className="h-4 w-4" />
-              <span className="font-medium">Vocabulary</span>
-              <span className="text-zinc-500">•</span>
-              <span className="text-zinc-600 dark:text-zinc-400">{LESSON}</span>
-            </div>
-            <h1 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
-              Learn smarter, not harder
-            </h1>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-              Flashcards + quiz + spaced repetition. Your progress is saved locally.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant={mode === "study" ? "default" : "secondary"}
-              onClick={() => setMode("study")}
-              className="rounded-2xl"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Study
-            </Button>
-            <Button
-              variant={mode === "quiz" ? "default" : "secondary"}
-              onClick={() => setMode("quiz")}
-              className="rounded-2xl"
-            >
-              <Dices className="mr-2 h-4 w-4" />
-              Quiz
-            </Button>
-            <Button
-              variant={mode === "list" ? "default" : "secondary"}
-              onClick={() => setMode("list")}
-              className="rounded-2xl"
-            >
-              <ListChecks className="mr-2 h-4 w-4" />
-              Word list
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setSettingsOpen(true)}
-              className="rounded-2xl"
-            >
-              Settings
-            </Button>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{LESSON}</h1>
+          <p className="text-gray-500 dark:text-white/60 mt-1">
+            {WORDS.length} words to learn
+          </p>
         </div>
+        <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)}>
+          <Settings size={20} />
+        </Button>
+      </div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <Card className="rounded-3xl shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Due now
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-end justify-between">
-              <div className="text-3xl font-semibold">{dueCount}</div>
-              <Button
-                variant="secondary"
-                className="rounded-2xl"
-                onClick={startDueSession}
-              >
-                <Flame className="mr-2 h-4 w-4" />
+      {/* Stats Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-white dark:bg-white/5 rounded-xl p-4 border border-gray-100 dark:border-white/10">
+          <div className="text-xs text-gray-500 dark:text-white/50 font-medium uppercase tracking-wider">Due</div>
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">{dueCount}</span>
+            {dueCount > 0 && (
+              <button onClick={startDueSession} className="text-xs text-primary-600 dark:text-accent-pink hover:underline">
                 Start
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-3xl shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Streak
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-end justify-between">
-              <div className="text-3xl font-semibold">{progress.streak || 0}</div>
-              <div className="text-sm text-zinc-500">days</div>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-3xl shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Accuracy
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-end justify-between">
-              <div className="text-3xl font-semibold">{stats.accuracy}%</div>
-              <div className="text-sm text-zinc-500">
-                {stats.totalCorrect} ✓ / {stats.totalWrong} ✕
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="mt-4 grid gap-4 md:grid-cols-12">
-          <div className="md:col-span-8">
-            <AnimatePresence mode="wait">
-              {mode === "study" && (
-                <motion.div
-                  key="study"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Card className="rounded-3xl shadow-sm">
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2">
-                          <CardTitle className="text-base">
-                            Flashcard {index + 1}/{studyQueue.length}
-                          </CardTitle>
-                          <Badge variant={badge.variant} className="rounded-full">
-                            {badge.label}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="rounded-2xl"
-                            onClick={() => speak(activeWord.word)}
-                            aria-label="Speak"
-                          >
-                            <Volume2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="rounded-2xl"
-                            onClick={reshuffle}
-                            aria-label="Shuffle"
-                          >
-                            <Shuffle className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <motion.button
-                        onClick={() => setShowBack((s) => !s)}
-                        className="w-full rounded-3xl border bg-white dark:bg-white/5 p-5 text-left shadow-sm transition hover:shadow"
-                        whileTap={{ scale: 0.99 }}
-                      >
-                        {!showBack ? (
-                          <div>
-                            <div className="text-xs text-zinc-500">Tap to reveal</div>
-                            <div className="mt-2 flex items-baseline gap-2">
-                              <div className="text-3xl font-semibold tracking-tight">
-                                {activeWord.word}
-                              </div>
-                              <div className="text-sm text-zinc-500">
-                                {activeWord.pos}
-                              </div>
-                            </div>
-                            <div className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-                              Think: meaning + 1 sentence.
-                            </div>
-                          </div>
-                        ) : (
-                          <div>
-                            <div className="text-xs text-zinc-500">Definition</div>
-                            <div className="mt-2 text-lg font-medium">
-                              {activeWord.definition}
-                            </div>
-
-                            <div className="mt-4 grid gap-3">
-                              <div className="rounded-2xl bg-zinc-50 dark:bg-white/5 p-4">
-                                <div className="text-xs font-medium text-zinc-500">
-                                  Example A
-                                </div>
-                                <div className="mt-1 text-sm text-zinc-800 dark:text-zinc-200">
-                                  {activeWord.example_a}
-                                </div>
-                              </div>
-                              <div className="rounded-2xl bg-zinc-50 dark:bg-white/5 p-4">
-                                <div className="text-xs font-medium text-zinc-500">
-                                  Example B
-                                </div>
-                                <div className="mt-1 text-sm text-zinc-800 dark:text-zinc-200">
-                                  {activeWord.example_b}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="mt-4 flex flex-wrap items-center gap-2">
-                              <Badge variant="outline" className="rounded-full">
-                                Interval: {activeItem.intervalDays}d
-                              </Badge>
-                              <Badge variant="outline" className="rounded-full">
-                                Ease: {activeItem.ease.toFixed(2)}
-                              </Badge>
-                              <Badge variant="outline" className="rounded-full">
-                                Correct: {activeItem.correct}
-                              </Badge>
-                              <Badge variant="outline" className="rounded-full">
-                                Wrong: {activeItem.wrong}
-                              </Badge>
-                            </div>
-                          </div>
-                        )}
-                      </motion.button>
-
-                      <div className="mt-4 flex flex-col gap-2">
-                        <div className="text-sm font-medium">How well did you know it?</div>
-                        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                          <Button
-                            variant="destructive"
-                            className="rounded-2xl"
-                            onClick={() => gradeCard(1)}
-                            disabled={!showBack}
-                          >
-                            <X className="mr-2 h-4 w-4" />
-                            Again
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            className="rounded-2xl"
-                            onClick={() => gradeCard(3)}
-                            disabled={!showBack}
-                          >
-                            Okay
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            className="rounded-2xl"
-                            onClick={() => gradeCard(4)}
-                            disabled={!showBack}
-                          >
-                            Good
-                          </Button>
-                          <Button
-                            className="rounded-2xl"
-                            onClick={() => gradeCard(5)}
-                            disabled={!showBack}
-                          >
-                            <Check className="mr-2 h-4 w-4" />
-                            Easy
-                          </Button>
-                        </div>
-                        <div className="text-xs text-zinc-500">
-                          Tip: you can only grade after revealing the answer.
-                        </div>
-                      </div>
-
-                      <div className="mt-4 flex items-center justify-between">
-                        <Button
-                          variant="outline"
-                          className="rounded-2xl"
-                          onClick={goPrev}
-                          disabled={index === 0}
-                        >
-                          <ChevronLeft className="mr-2 h-4 w-4" />
-                          Prev
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="rounded-2xl"
-                          onClick={goNext}
-                          disabled={index >= studyQueue.length - 1}
-                        >
-                          Next
-                          <ChevronRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-
-              {mode === "quiz" && (
-                <motion.div
-                  key="quiz"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Card className="rounded-3xl shadow-sm">
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between gap-3">
-                        <CardTitle className="text-base">
-                          Quiz {index + 1}/{studyQueue.length}
-                        </CardTitle>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={badge.variant} className="rounded-full">
-                            {badge.label}
-                          </Badge>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="rounded-2xl"
-                            onClick={() => speak(activeWord.word)}
-                            aria-label="Speak"
-                          >
-                            <Volume2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="rounded-3xl border bg-white dark:bg-white/5 p-5 shadow-sm">
-                        <div className="text-xs text-zinc-500">Definition</div>
-                        <div className="mt-2 text-lg font-medium">
-                          {activeWord.definition}
-                        </div>
-                        <div className="mt-4 grid gap-3">
-                          <div className="rounded-2xl bg-zinc-50 dark:bg-white/5 p-4">
-                            <div className="text-xs font-medium text-zinc-500">
-                              Example
-                            </div>
-                            <div className="mt-1 text-sm text-zinc-800 dark:text-zinc-200">
-                              {activeWord.example_a}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-4">
-                        <div className="flex items-center gap-2">
-                          <Input
-                            value={quizInput}
-                            onChange={(e) => setQuizInput(e.target.value)}
-                            placeholder="Type the word..."
-                            className="h-11 rounded-2xl"
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") quizCheck()
-                            }}
-                          />
-                          <Button
-                            onClick={quizCheck}
-                            className="h-11 rounded-2xl"
-                            disabled={!quizInput.trim()}
-                          >
-                            Check
-                          </Button>
-                        </div>
-
-                        {quizResult && (
-                          <div className="mt-3 rounded-2xl border bg-white dark:bg-white/5 p-4 text-sm">
-                            {quizResult.ok ? (
-                              <div className="flex items-center gap-2 text-zinc-800 dark:text-zinc-200">
-                                <Check className="h-4 w-4" />
-                                Correct!
-                              </div>
-                            ) : (
-                              <div className="text-zinc-800 dark:text-zinc-200">
-                                <div className="flex items-center gap-2">
-                                  <X className="h-4 w-4" />
-                                  Not quite.
-                                </div>
-                                <div className="mt-1 text-zinc-600 dark:text-zinc-400">
-                                  Expected: <span className="font-medium">{quizResult.expected}</span>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="mt-4 flex items-center justify-between">
-                        <Button
-                          variant="outline"
-                          className="rounded-2xl"
-                          onClick={goPrev}
-                          disabled={index === 0}
-                        >
-                          <ChevronLeft className="mr-2 h-4 w-4" />
-                          Prev
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="rounded-2xl"
-                          onClick={goNext}
-                          disabled={index >= studyQueue.length - 1}
-                        >
-                          Next
-                          <ChevronRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-
-              {mode === "list" && (
-                <motion.div
-                  key="list"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Card className="rounded-3xl shadow-sm">
-                    <CardHeader className="pb-2">
-                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                        <CardTitle className="text-base">All words</CardTitle>
-                        <div className="flex flex-col gap-2 md:flex-row md:items-center">
-                          <div className="relative">
-                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                            <Input
-                              value={search}
-                              onChange={(e) => setSearch(e.target.value)}
-                              placeholder="Search words, meanings, examples..."
-                              className="h-11 w-full rounded-2xl pl-10 md:w-[320px]"
-                            />
-                          </div>
-
-                          <Select value={filter} onValueChange={(v) => setFilter(v as Filter)}>
-                            <SelectTrigger className="h-11 w-full rounded-2xl md:w-[200px]">
-                              <SelectValue placeholder="Filter" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">All</SelectItem>
-                              <SelectItem value="due">Due</SelectItem>
-                              <SelectItem value="new">New</SelectItem>
-                              <SelectItem value="learning">Learning</SelectItem>
-                              <SelectItem value="mastered">Mastered</SelectItem>
-                              <SelectItem value="struggling">Struggling</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </CardHeader>
-
-                    <CardContent>
-                      <div className="grid gap-3">
-                        {filteredList.map((w) => {
-                          const it = progress.items[w.id]
-                          const m = getMastery(it)
-                          const b = masteryBadge(m)
-
-                          return (
-                            <div
-                              key={w.id}
-                              className="rounded-3xl border bg-white dark:bg-white/5 p-4 shadow-sm"
-                            >
-                              <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                                <div>
-                                  <div className="flex items-baseline gap-2">
-                                    <div className="text-xl font-semibold">{w.word}</div>
-                                    <div className="text-sm text-zinc-500">{w.pos}</div>
-                                    <Badge
-                                      variant={b.variant}
-                                      className="ml-1 rounded-full"
-                                    >
-                                      {b.label}
-                                    </Badge>
-                                  </div>
-                                  <div className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                                    {w.definition}
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="rounded-2xl"
-                                    onClick={() => speak(w.word)}
-                                    aria-label="Speak"
-                                  >
-                                    <Volume2 className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    variant="secondary"
-                                    className="rounded-2xl"
-                                    onClick={() => {
-                                      setStudyQueue([w.id, ...studyQueue.filter((id) => id !== w.id)])
-                                      setIndex(0)
-                                      setMode("study")
-                                      setShowBack(false)
-                                    }}
-                                  >
-                                    Study
-                                  </Button>
-                                </div>
-                              </div>
-
-                              <div className="mt-3 grid gap-2 md:grid-cols-2">
-                                <div className="rounded-2xl bg-zinc-50 dark:bg-white/5 p-3 text-sm text-zinc-800 dark:text-zinc-200">
-                                  {w.example_a}
-                                </div>
-                                <div className="rounded-2xl bg-zinc-50 dark:bg-white/5 p-3 text-sm text-zinc-800 dark:text-zinc-200">
-                                  {w.example_b}
-                                </div>
-                              </div>
-
-                              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
-                                <span className="rounded-full border bg-white dark:bg-white/5 px-2 py-1">
-                                  Interval: {it.intervalDays}d
-                                </span>
-                                <span className="rounded-full border bg-white dark:bg-white/5 px-2 py-1">
-                                  Ease: {it.ease.toFixed(2)}
-                                </span>
-                                <span className="rounded-full border bg-white dark:bg-white/5 px-2 py-1">
-                                  Correct: {it.correct}
-                                </span>
-                                <span className="rounded-full border bg-white dark:bg-white/5 px-2 py-1">
-                                  Wrong: {it.wrong}
-                                </span>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-
-                      {!filteredList.length && (
-                        <div className="rounded-3xl border bg-white dark:bg-white/5 p-6 text-sm text-zinc-600 dark:text-zinc-400">
-                          No results.
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              </button>
+            )}
           </div>
-
-          <div className="md:col-span-4">
-            <Card className="rounded-3xl shadow-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Progress</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-3">
-                  <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-                    <div className="text-xs text-zinc-500">Words</div>
-                    <div className="mt-1 text-2xl font-semibold">{stats.total}</div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-                      <div className="text-xs text-zinc-500">New</div>
-                      <div className="mt-1 text-xl font-semibold">{stats.fresh}</div>
-                    </div>
-                    <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-                      <div className="text-xs text-zinc-500">Learning</div>
-                      <div className="mt-1 text-xl font-semibold">{stats.learning}</div>
-                    </div>
-                    <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-                      <div className="text-xs text-zinc-500">Mastered</div>
-                      <div className="mt-1 text-xl font-semibold">{stats.mastered}</div>
-                    </div>
-                    <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-                      <div className="text-xs text-zinc-500">Struggling</div>
-                      <div className="mt-1 text-xl font-semibold">{stats.struggling}</div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-                    <div className="text-xs text-zinc-500">Total reviews</div>
-                    <div className="mt-1 text-2xl font-semibold">
-                      {progress.totalReviews || 0}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <Button
-                      variant="secondary"
-                      className="rounded-2xl"
-                      onClick={startDueSession}
-                    >
-                      <Flame className="mr-2 h-4 w-4" />
-                      Study due words
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="rounded-2xl"
-                      onClick={reshuffle}
-                    >
-                      <Shuffle className="mr-2 h-4 w-4" />
-                      Shuffle session
-                    </Button>
-                  </div>
-
-                  <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-                    <div className="text-xs font-medium text-zinc-500">Quick tips</div>
-                    <ul className="mt-2 list-disc pl-5 text-sm text-zinc-700 dark:text-zinc-300">
-                      <li>Reveal → grade honestly.</li>
-                      <li>Use Quiz to force recall.</li>
-                      <li>Tap the speaker to practice pronunciation.</li>
-                      <li>Do 5 minutes daily for streak.</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        </div>
+        <div className="bg-white dark:bg-white/5 rounded-xl p-4 border border-gray-100 dark:border-white/10">
+          <div className="text-xs text-gray-500 dark:text-white/50 font-medium uppercase tracking-wider">Streak</div>
+          <div className="mt-1 flex items-baseline gap-1">
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">{progress.streak || 0}</span>
+            <span className="text-sm text-gray-500 dark:text-white/50">days</span>
+          </div>
+        </div>
+        <div className="bg-white dark:bg-white/5 rounded-xl p-4 border border-gray-100 dark:border-white/10">
+          <div className="text-xs text-gray-500 dark:text-white/50 font-medium uppercase tracking-wider">Accuracy</div>
+          <div className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{stats.accuracy}%</div>
+        </div>
+        <div className="bg-white dark:bg-white/5 rounded-xl p-4 border border-gray-100 dark:border-white/10">
+          <div className="text-xs text-gray-500 dark:text-white/50 font-medium uppercase tracking-wider">Mastered</div>
+          <div className="mt-1 flex items-baseline gap-1">
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">{stats.mastered}</span>
+            <span className="text-sm text-gray-500 dark:text-white/50">/ {stats.total}</span>
           </div>
         </div>
       </div>
 
+      {/* Tab Navigation */}
+      <div className="flex gap-2 p-1 bg-gray-100 dark:bg-white/5 rounded-xl">
+        <TabButton
+          icon={<BookOpen size={18} />}
+          label="Study"
+          active={activeTab === "study"}
+          onClick={() => setActiveTab("study")}
+        />
+        <TabButton
+          icon={<Layers size={18} />}
+          label="Cards"
+          active={activeTab === "cards"}
+          onClick={() => setActiveTab("cards")}
+        />
+        <TabButton
+          icon={<CheckCircle2 size={18} />}
+          label="Quiz"
+          active={activeTab === "quiz"}
+          onClick={() => setActiveTab("quiz")}
+        />
+      </div>
+
+      {/* Content */}
+      {activeTab === "study" && (
+        <div className="space-y-4">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search words..."
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 focus:ring-2 focus:ring-primary-500 dark:focus:ring-accent-pink/50 outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Word Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredWords.map((item) => {
+              const it = progress.items[item.id]
+              const m = getMastery(it)
+              const b = masteryBadge(m)
+
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white dark:glass-card p-6 rounded-2xl border border-gray-100 dark:border-white/10 hover:shadow-md dark:hover:shadow-accent-pink/10 transition-shadow group"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-1">
+                      <h3 className="text-xl font-bold text-gray-800 dark:text-white">{item.word}</h3>
+                      <AudioPlayer text={item.word} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={b.variant}>{b.label}</Badge>
+                      <span className="text-xs font-semibold px-2 py-1 bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-white/60 rounded uppercase tracking-wider">
+                        {item.pos}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-primary-600 dark:text-accent-pink font-medium mb-4">{item.definition}</p>
+                  <div className="space-y-2">
+                    <p className="text-xs text-gray-400 dark:text-white/40 font-bold uppercase tracking-widest">Examples</p>
+                    <p className="text-sm text-gray-600 dark:text-white/70 italic border-l-2 border-primary-100 dark:border-accent-pink/30 pl-3">
+                      &quot;{item.example_a}&quot;
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-white/70 italic border-l-2 border-primary-100 dark:border-accent-pink/30 pl-3">
+                      &quot;{item.example_b}&quot;
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {filteredWords.length === 0 && (
+            <div className="text-center py-12 text-gray-500 dark:text-white/60">
+              No words found
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "cards" && (
+        <div className="flex flex-col items-center py-6">
+          <div
+            className="w-full max-w-lg aspect-[4/3] cursor-pointer [perspective:1000px]"
+            onClick={() => setShowBack(!showBack)}
+          >
+            <div
+              className={`relative w-full h-full text-center transition-all duration-500 [transform-style:preserve-3d] ${
+                showBack ? "[transform:rotateY(180deg)]" : ""
+              }`}
+            >
+              {/* Front */}
+              <div className="absolute inset-0 bg-white dark:glass-card border-2 border-gray-200 dark:border-white/15 rounded-3xl shadow-xl [backface-visibility:hidden] flex flex-col items-center justify-center p-10">
+                <Badge variant={badge.variant} className="mb-4">{badge.label}</Badge>
+                <h2 className="text-4xl font-black text-gray-800 dark:text-white tracking-tight">
+                  {activeWord.word}
+                </h2>
+                <p className="mt-4 text-gray-400 dark:text-white/60 font-medium">{activeWord.pos}</p>
+                <div onClick={(e) => e.stopPropagation()} className="mt-4">
+                  <AudioPlayer text={activeWord.word} />
+                </div>
+                <p className="mt-8 text-gray-300 dark:text-white/30 text-sm">Tap to reveal</p>
+              </div>
+              {/* Back */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-700 dark:from-accent-pink dark:to-pink-600 text-white rounded-3xl shadow-xl [backface-visibility:hidden] [transform:rotateY(180deg)] flex flex-col items-center justify-center p-10">
+                <span className="text-white/70 text-sm font-bold uppercase tracking-widest mb-4">Definition</span>
+                <p className="text-2xl font-semibold leading-relaxed mb-6">{activeWord.definition}</p>
+                <div className="w-full h-px bg-white/20 mb-6" />
+                <p className="text-sm text-white/80 italic">&quot;{activeWord.example_a}&quot;</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Grading */}
+          {showBack && (
+            <div className="mt-6 w-full max-w-lg">
+              <p className="text-sm font-medium text-gray-700 dark:text-white/80 mb-3 text-center">How well did you know it?</p>
+              <div className="grid grid-cols-4 gap-2">
+                <Button variant="destructive" onClick={() => gradeCard(1)} className="flex-col h-auto py-3">
+                  <X size={18} />
+                  <span className="text-xs mt-1">Again</span>
+                </Button>
+                <Button variant="outline" onClick={() => gradeCard(3)} className="flex-col h-auto py-3">
+                  <span className="text-xs">Okay</span>
+                </Button>
+                <Button variant="outline" onClick={() => gradeCard(4)} className="flex-col h-auto py-3">
+                  <span className="text-xs">Good</span>
+                </Button>
+                <Button variant="default" onClick={() => gradeCard(5)} className="flex-col h-auto py-3">
+                  <Check size={18} />
+                  <span className="text-xs mt-1">Easy</span>
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex items-center gap-8 mt-8">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => { setIndex((i) => (i - 1 + studyQueue.length) % studyQueue.length); setShowBack(false) }}
+              className="w-12 h-12 rounded-full"
+            >
+              <ChevronLeft size={24} />
+            </Button>
+            <span className="text-gray-500 dark:text-white/60 font-mono font-bold bg-gray-100 dark:bg-white/10 px-4 py-2 rounded-lg">
+              {index + 1} / {studyQueue.length}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => { setIndex((i) => (i + 1) % studyQueue.length); setShowBack(false) }}
+              className="w-12 h-12 rounded-full"
+            >
+              <ChevronRight size={24} />
+            </Button>
+          </div>
+
+          <div className="flex gap-2 mt-4">
+            <Button variant="ghost" size="sm" onClick={reshuffle} className="gap-2">
+              <Shuffle size={16} />
+              Shuffle
+            </Button>
+            <Button variant="ghost" size="sm" onClick={startDueSession} className="gap-2">
+              <Flame size={16} />
+              Due ({dueCount})
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "quiz" && (
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Progress */}
+          <div className="flex justify-between items-center">
+            <div>
+              <span className="text-primary-600 dark:text-accent-pink font-bold">Question {index + 1}</span>
+              <p className="text-gray-400 dark:text-white/40 text-sm">Type the word that matches</p>
+            </div>
+            <span className="text-sm font-bold text-gray-500 dark:text-white/60 bg-gray-100 dark:bg-white/10 px-3 py-1 rounded-lg">
+              {index + 1}/{studyQueue.length}
+            </span>
+          </div>
+
+          {/* Question */}
+          <div className="bg-white dark:glass-card rounded-3xl border-2 border-gray-100 dark:border-white/10 p-8">
+            <p className="text-xl font-bold text-gray-800 dark:text-white leading-relaxed">
+              &quot;{activeWord.definition}&quot;
+            </p>
+            <p className="mt-4 text-sm text-gray-500 dark:text-white/50 italic">
+              {activeWord.example_a}
+            </p>
+          </div>
+
+          {/* Input */}
+          <div className="flex items-center gap-2">
+            <Input
+              value={quizInput}
+              onChange={(e) => setQuizInput(e.target.value)}
+              placeholder="Type the word..."
+              className="h-12"
+              onKeyDown={(e) => { if (e.key === "Enter") quizCheck() }}
+            />
+            <Button onClick={quizCheck} className="h-12" disabled={!quizInput.trim()}>
+              Check
+            </Button>
+          </div>
+
+          {quizResult && (
+            <div className={`rounded-xl p-4 ${quizResult.ok ? "bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30" : "bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30"}`}>
+              {quizResult.ok ? (
+                <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+                  <Check size={20} />
+                  Correct!
+                </div>
+              ) : (
+                <div className="text-red-700 dark:text-red-400">
+                  <div className="flex items-center gap-2">
+                    <X size={20} />
+                    Not quite.
+                  </div>
+                  <div className="mt-1">
+                    Expected: <span className="font-bold">{quizResult.expected}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex items-center justify-between">
+            <Button
+              variant="outline"
+              onClick={() => { setIndex((i) => Math.max(0, i - 1)); setQuizResult(null) }}
+              disabled={index === 0}
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Prev
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => { setIndex((i) => Math.min(studyQueue.length - 1, i + 1)); setQuizResult(null) }}
+              disabled={index >= studyQueue.length - 1}
+            >
+              Next
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Dialog */}
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
         <DialogContent className="rounded-3xl">
           <DialogHeader>
             <DialogTitle>Settings</DialogTitle>
           </DialogHeader>
 
-          <div className="grid gap-3">
-            <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-              <div className="text-sm font-medium">Reset progress</div>
-              <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                Clears your streak and spaced repetition history.
+          <div className="grid gap-4">
+            <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
+              <div className="text-sm font-medium text-gray-900 dark:text-white">Reset Progress</div>
+              <div className="mt-1 text-sm text-gray-500 dark:text-white/60">
+                Clear your streak and spaced repetition history.
               </div>
               <div className="mt-3 flex gap-2">
                 <Button
                   variant="destructive"
-                  className="rounded-2xl"
+                  size="sm"
                   onClick={() => {
                     resetProgress()
                     setSettingsOpen(false)
                   }}
                 >
+                  <RotateCcw size={16} className="mr-2" />
                   Reset
                 </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-2xl"
-                  onClick={() => setSettingsOpen(false)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setSettingsOpen(false)}>
                   Cancel
                 </Button>
               </div>
             </div>
 
-            <div className="rounded-3xl border bg-white dark:bg-white/5 p-4">
-              <div className="text-sm font-medium">About</div>
-              <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                Vocabulary learning with spaced repetition. Progress is saved in localStorage.
+            <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
+              <div className="text-sm font-medium text-gray-900 dark:text-white">About</div>
+              <div className="mt-1 text-sm text-gray-500 dark:text-white/60">
+                Vocabulary learning with spaced repetition. Progress is saved locally.
               </div>
             </div>
           </div>
