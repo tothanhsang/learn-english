@@ -48,6 +48,14 @@ export default function HomePage() {
             Đăng ký
           </Link>
         </div>
+
+        {/* 3D Experience link */}
+        <Link
+          href="/3d"
+          className="inline-block text-primary-500 dark:text-indigo-400 hover:text-primary-600 dark:hover:text-indigo-300 transition text-sm"
+        >
+          View 3D Experience →
+        </Link>
       </div>
     </div>
   )
