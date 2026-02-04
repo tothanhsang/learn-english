@@ -1,6 +1,9 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// 7 days in seconds
+const SESSION_MAX_AGE = 7 * 24 * 60 * 60
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -17,18 +20,18 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({ name, value, ...options })
+          request.cookies.set({ name, value, ...options, maxAge: SESSION_MAX_AGE })
           response = NextResponse.next({
             request: { headers: request.headers },
           })
-          response.cookies.set({ name, value, ...options })
+          response.cookies.set({ name, value, ...options, maxAge: SESSION_MAX_AGE })
         },
         remove(name: string, options: CookieOptions) {
-          request.cookies.set({ name, value: '', ...options })
+          request.cookies.set({ name, value: '', ...options, maxAge: 0 })
           response = NextResponse.next({
             request: { headers: request.headers },
           })
-          response.cookies.set({ name, value: '', ...options })
+          response.cookies.set({ name, value: '', ...options, maxAge: 0 })
         },
       },
     }
