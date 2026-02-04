@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
 import { User } from '@supabase/supabase-js'
-import { LogOut, BookOpen, BarChart3, GraduationCap, Target } from 'lucide-react'
+import { LogOut, BookOpen, BarChart3, GraduationCap, Target, Languages } from 'lucide-react'
 
 const navItems = [
   { href: '/dashboard', label: 'Học Tập', icon: BookOpen },
   { href: '/practice', label: 'Tập Luyện', icon: GraduationCap },
+  { href: '/toeic', label: 'TOEIC', icon: Languages },
   { href: '/ielts', label: 'IELTS', icon: Target },
   { href: '/stats', label: 'Thống Kê', icon: BarChart3 },
 ]
